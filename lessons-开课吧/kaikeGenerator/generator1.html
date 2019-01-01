@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <script>
+            // function show(){
+            //     alert('a');
+            //
+            //     alert("b");
+            // }
+            // show();
+
+            function *show(){
+                alert('a');
+
+                yield; // 放弃；暂时放弃执行，把我的控制权交出去，过一会需要重新执行把控制权还回来
+
+                alert("b");
+            }
+            let genObj = show();
+            // console.log(genObj);
+            genObj.next(); // 执行了 a，碰到 yield就不执行了
+            genObj.next(); // 执行了
+            // 踹一脚走一步
+
+        </script>
+    </body>
+</html>

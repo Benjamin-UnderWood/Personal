@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <script>
+            function *show() {
+                alert('a');
+
+                // yield;
+                let m = yield; // 接收next里面的参数
+                alert(m);
+
+                alert('b');
+            }
+
+            let gen = show();
+
+            // gen.next(); 执行
+            // gen.next();
+
+            gen.next(12); // 通过next 传参第一个next 是废的；传什么都不好使；没法给yield传参
+            gen.next(5);  // next 里面可以传参;执行的是 yield 往后的过程，因此 m 是5
+
+            // 要给第一个过程传参，那么就用原来我们往函数里传参的过程
+            // function *show(num1, num2) {
+            //     alert(`${num1}, ${num2}`)
+            //     alert('a');
+            //
+            //     // yield;
+            //     let m = yield; // 接收next里面的参数
+            //     alert(m);
+            //
+            //     alert('b');
+            // }
+            //
+            // let gen = show(99, 88); // num1 99，num2 88
+
+            // yield就是将一个函数化分成一个个小函数，中间可以传入参数，也可以返回值，给下一个参数用
+
+        </script>
+    </body>
+</html>

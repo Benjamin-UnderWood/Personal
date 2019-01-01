@@ -1,0 +1,177 @@
+body {
+  font-family:      Georgia, "Times New Roman", Times, serif;
+  font-size:        small;
+  margin:           0px;
+}
+div{
+	outline-style:    dashed;
+	outline-width:    1px;
+	outline-color:    red;
+}
+h1 {
+  font-size:        16px;
+  color:            #954b4b;
+}
+
+h2 {
+	font-size:        110%;
+ }
+a{
+	text-decoration:  none;
+  color:            white;
+}
+.fright a {
+  color:            lightblue;
+}
+nav,#nav-secondary{
+	white-space:      nowrap;/*强制html元素不随窗口缩小而换行*/
+	background-color: lightblue;
+	font-family:      arial;
+	color:            white;
+}
+nav ul,
+#nav-secondary ul{
+	margin:           0px;
+	padding:          5px 0px 5px 0px ;
+}
+nav ul li,
+#nav-secondary ul li{
+	display:          inline;
+	font-size:        15px;
+  list-style-type:  none;
+	margin:           0px;
+	padding:          0px 10px;/*display 属性为inline 因此padding margin 都只能影响左右而不能影响上下，上下多少都没用*/
+}
+#partOne{
+	min-width:        1040px;
+	margin-bottom:    40px;/*这个margin可直接设为bottom的，很重要，要不然底下的就不能和它脱开了*/
+	background:       lightgray;
+}
+#nav-primary{
+	width:            1040px;/*设定宽度后，窗口缩小后，块中的内容就不会换行了；*/
+  margin:           0 auto;
+}
+#webname{
+	font-size:        35px;
+	float:            left;/*浮动第一次*/
+	background-color: pink;
+	top:              25px;
+	left:             200px;
+}
+#search{
+	background-color: grey;
+}/*这一级可以省略*/
+fieldset{
+	position:         static;
+}/*作为正常元素流入webname后面*/
+#good{
+	float:            left;/*第二次浮动，在fieldset块里，靠左浮动，注意此处的浮动是相对于其上一级的块中的*/
+	background-color: blue;
+	width:            500px;
+}
+#nav-secondary{
+	width:            1040px;
+	margin:           0 auto;
+}
+#container {
+	height:          2000px;
+	width:           1040px;
+	margin:          0 auto;/*十分重要！，设定一个宽度后，这样就居中了*/
+}
+#article{
+  background-color:pink;
+  width:           675px;
+  float:           left;
+  height:          2000px;
+  }
+#screening{
+  background:      lightblue;
+}
+.screening-hd{
+  background:      grey;
+}
+.screening-bd{
+  background:      #A286CA;
+}
+.slide-tip{
+  float:           right;
+}
+.ui-slide-control{
+  float:           right;
+}
+.prev-bth,.next-bth{
+
+}
+.prev-bth:hover,
+.next-bth:hover{
+}
+.screening-bd{
+  height:          200px;
+}
+.screening-bd ul {
+  list-style-type: none;
+  margin:          0px;
+  padding:         0px;
+}
+.screening-bd ul li{
+  display:         inline;
+}
+.imgOne{
+  float:           left;
+  background:      #D4F891;
+  padding:         70px 45px 70px 45px;
+  margin:          0px 20px 0px 0px;
+}
+.recent{
+  background:      lightblue;
+}
+.recent-hd{
+  background:      grey;
+}
+.recent-bd{
+  height:          330px;
+  background:      #A286CA;
+
+}
+.recent-bd ul {
+  list-style-type: none;
+  margin:          0px;
+  padding:         0px;
+}
+
+.recent-bd ul li{
+  display:         inline;
+}
+.imgTwo{
+  float:          left;
+  background:     #D4F891;
+  padding:        70px 45px 70px 45px;
+  margin:         0px 20px 20px 0px;
+}
+
+#aside{
+  background-color: lightblue;
+  width:          300px;
+  float:          right;
+}
+
+#footer{
+	text-align:     center;
+	color:          grey;
+	min-width:      1040px;
+	margin-top:     130px;
+}
+#extraf{
+	width:          1040px;/*设定宽度后，窗口缩小后，块中的内容就不会换行了；*/
+	margin:         0 auto;
+	height:         15px;/*定义了height之后，下面块中的内容就不会串上来了*/
+}
+.fleft{
+ float:           left;
+}
+#flow{
+	position:       static;
+}
+.fright{
+float: right;
+}

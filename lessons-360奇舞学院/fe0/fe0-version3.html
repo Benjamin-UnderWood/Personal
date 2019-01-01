@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+        body {
+            background-color: white;
+            font-size: 24px;
+        }
+        #user-list {
+            line-height: 1.5em;
+        }
+        #user-list  input {
+            display: none;
+        }
+        #user-list  label {
+            display: block;
+        }
+        #user-list > li:hover {
+            background-color: rgba(0, 0, 0, 0.3)
+        }
+        /* checked input 时候 label 的样式  */
+        #user-list input:checked+label {
+            background-color: black;
+            color: white;
+        }
+        </style>
+    </head>
+    <body>
+        <ul id="user-list">
+            <li>
+                <!-- 假如是多选的话，把 input type 改成 checkbox 就好了 -->
+                <input type="radio" id="item0" name="items" value="张三"/>
+                <label for="item0">张三</label>
+            </li>
+            <li>
+                <input type="radio" id="item1" name="items" value="张三"/>
+                <label for="item1">李四</label>
+            </li>
+            <li>
+                <input type="radio" id="item2" name="items" value="张三"/>
+                <label for="item2">王五</label>
+            </li>
+            <li>
+                <input type="radio" id="item3" name="items" value="张三"/>
+                <label for="item3">赵六</label>
+            </li>
+        </ul>
+        <script type="text/javascript">
+            // 辅助函数
+            var log = function() {
+                console.log.apply(console,arguments);
+            }
+            //
+            let list = document.querySelector('#user-list');
+            list.addEventListener('clisk', function(e){
+                if(e.target.tagName === 'INPUT') {
+                    // 'input:checked' 当前被选中的元素
+                    let checkedItem = list.querySelector('input:checked');
+                    console.log(checked.value);
+                }
+            });
+        </script>
+    </body>
+</html>

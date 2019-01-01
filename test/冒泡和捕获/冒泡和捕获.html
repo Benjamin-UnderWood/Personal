@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <div id="div1" style="background: blue;width: 300px; height: 300px;">
+            <div id="div2" style="background: red;width: 150px; height: 150px;">
+                <div id="div3" style="background: yellow;width: 100px; height: 100px;">
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+        var oDvi1 = document.getElementById('div1'),
+            oDvi2 = document.getElementById('div2'),
+            oDvi3 = document.getElementById('div3');
+        // 冒泡 默认
+        // oDvi1.addEventListener('click', function(){alert('蓝蓝蓝');});  //蓝
+        // oDvi2.addEventListener('click', function(){alert('红红红');});  //红
+        // oDvi3.addEventListener('click', function(){alert('黄黄黄');});  //黄
+        // // 运行结果 黄黄黄  红红红  蓝蓝蓝
+
+        // 捕获
+        // oDvi1.addEventListener('click', function(){alert('蓝蓝蓝');}, true);  //蓝
+        // oDvi2.addEventListener('click', function(){alert('红红红');}, true);  //红
+        // oDvi3.addEventListener('click', function(){alert('黄黄黄');}, true);  //黄
+        
+        // 捕获 && 冒泡
+        // // 运行结果 蓝蓝蓝  红红红  黄黄黄
+        oDvi1.addEventListener('click', function(){alert('蓝蓝蓝');}, true);   //蓝
+        oDvi2.addEventListener('click', function(){alert('红红红');}, false);  //红
+        oDvi3.addEventListener('click', function(){alert('黄黄黄');}, true);   //黄
+        // 运行结果 蓝蓝蓝  黄黄黄  红红红
+        // 在div3上触发点击事件
+        // 捕获阶段: 外-》里 * 在div1处检测 useCapture 是否为true,是则执行程序，div2同理 .
+        // 目标阶段: 目标到div3处，发现div3就是鼠标点击的节点，所以这里是目标阶段。若目标阶段有事件处理程序，则执行该程序，这里不论 useCapture 为 true 还是 false。
+        // 冒泡阶段: 里-》外  在div2处检测useCapture 是否为false，是则执行该程序,div1同理
+        </script>
+    </body>
+</html>

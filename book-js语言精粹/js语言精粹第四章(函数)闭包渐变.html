@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <div class="">
+
+        </div>
+        <script type="text/javascript">
+            // 定义一个函数，它设置一个 DOM 节点为黄色，然后把它渐变成白色
+            var fade = function (node) {
+                var level = 1;
+                var step =function() {
+                    var hex = level.toString(16);
+                    node.style.backgroundColor = '#FFFF' + hex +hex;
+                    if (level < 15) {
+                        level += 1;
+                        setTimeout(step, 100);
+                    }
+                };
+                setTimeout(step, 100);
+            };
+
+            fade(document.body);
+        </script>
+    </body>
+</html>

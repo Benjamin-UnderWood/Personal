@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>jquery</title>
+        <style media="screen">
+        .done {
+            color: gray;
+            text-decoration: line-through;
+        }
+        </style>
+        <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    </head>
+    <body>
+        <div class="main">
+            <div class="form">
+                <input id="id-input-add">
+                <button id="id-button-add" type="button" name="button">Add</button>
+            </div>
+            <div class="" id="id-div-todo">
+                <div class="todo-cell" data-id="401">
+                    <span>hello</span>
+                    <div class="">
+                        <button type="button" name="button">edit</button>
+                        <button class="delete-button" type="button" name="button">delete</button>
+                        <button type="button" name="button">complete</button>
+                    </div>
+                </div>
+                <div class="todo-cell" data-id="101">
+                    <span>world</span>
+                    <div class="">
+                        <button type="button" name="button">edit</button>
+                        <button class="delete-button" type="button" name="button">delete</button>
+                        <button type="button" name="button">complete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            var log = function() {
+                console.log.apply(console,arguments);
+            }
+            var todoTemplete = function(todo) {
+                var t = `
+                <div class="todo-cell">
+                    <span>${todo}</span>
+                    <div class="">
+                        <button type="button" name="button">edit</button>
+                        <button class="delete-button" type="button" name="button">delete</button>
+                        <button class="complete-button" type="button" name="button">complete</button>
+                    </div>
+                </div>
+                `
+                return t;
+            }
+            $('#id-button-add').on('click', function(event){
+                var todo = $('#id-input-add').val();
+                $('#id-div-todo').append(todoTemplete(todo));
+            })
+            $('#id-input-add').on('keydown', function(event){
+                if($(event.key) === 'Enter') {
+                    log('keydown', event, event.target)
+                    var self = $(event.target);
+                    var todo = $('#id-input-add').val();
+                    $('#id-div-todo').append(todoTemplete(todo));
+                }
+            })
+
+            // jQuery 事件委托方式
+            $('#id-div-todo').on('click','.delete-button',function(event) {
+                log('delete', event, event.target);
+                var self = $(event.target);
+                self.closest('.todo-cell').remove();
+            })
+            $('#id-div-todo').on('click','.complete-button',function(event) {
+                log('click complete', event, event.target);
+                var self = $(event.target);
+                var span = self.closest('.todo-cell').find('span')
+                log(span)
+                span.toggleClass('done');
+            })
+            // 直接绑定 没有委托 会有问题；只对当前有的 绑定 了；新生成的并没有绑定
+            // $('.delete-button').on('click', function(event){
+            //     var button = $(event.target);
+            //     button.closest('.todo-cell').remove()
+            // })
+            $('#id-input-add').on('keydown',function(event){
+                log('key down', event)
+            })
+        </script>
+    </body>
+</html>

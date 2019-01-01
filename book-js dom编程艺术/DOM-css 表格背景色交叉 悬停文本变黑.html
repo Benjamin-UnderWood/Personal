@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+            body {
+                font-family: 'Helvetica','Arial',sans-serif;
+                background-color: #fff;
+                color: #000;
+            }
+            table {
+                margin: auto;
+                border: 1px solid #699;
+            }
+            caption {
+                margin: auto;
+                padding: 0.2em;
+                font-size: 1.2em;
+                font-weight: bold;
+            }
+            th {
+                font-weight: normal;
+                font-style: italic;
+                text-align: left;
+                border: 1px dotted #699;
+                background-color: #9cc;
+                color: #000
+            }
+            th,td {
+                width: 10em;
+                padding: 0.5em;
+            }
+            /* tr:hover{
+                font-weight: bold;
+            } */
+            /* tr:nth-child(odd) {
+                background-color: #ffc;
+            }
+            tr:nth-child(even) {
+                background-color: #fff;
+            } */
+            .odd {
+                background-color: #ffc;
+            }
+        </style>
+    </head>
+    <body>
+        <table>
+            <caption>Itinerary</caption>
+            <thead>
+                <tr>
+                    <th>When</th>
+                    <th>Where</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>June 9th</td>
+                    <td>Portland,<abbr title='Oregon'>OR</abbr></td>
+                </tr>
+                <tr>
+                    <td>June 10th</td>
+                    <td>Seattle,<abbr title='Washington'>WA</abbr></td>
+                </tr>
+                <tr>
+                    <td>June 12th</td>
+                    <td>Sacramento,<abbr title='California'>CA</abbr></td>
+                </tr>
+            </tbody>
+        </table>
+        <script type="text/javascript">
+            function displayAbbreviations() {
+                if (!document.getElementsByTagName || !document.createElement
+                || !document.createTextNode) return false;
+                // 取得所有缩略词
+                var abbreviations = document.getElementsByTagName('abbr');
+                if (abbreviations.length < 1) return false;
+                var defs = new Array();
+                // 遍历这些缩略词
+                for (var i = 0; i < abbreviations.length; i++) {
+                    var current_abbr = abbreviations[i];
+                    // var definition = abbreviations[i].getAttribute('title')
+                    var definition = current_abbr.title;
+                    // var key = abbreviations[i].lastChild.nodeValue;
+                    var key = current_abbr.innerText;
+                    // 将两个要保存到数组的变量的值，一个作为数组元素的下标(键)，另一个作为值的方式
+                    // 来同时保存这两个值
+                    defs[key] = definition;
+                }
+                // 创建定义列表
+                var dlist = document.createElement('dl');
+                // loop through the definitions
+                for(key in defs) {
+                    // 创建 dt 元素；标题 = 元素节点 + 文本节点
+                    var definition = defs[key];
+                    var dtitle = document.createElement('dt');
+                    var dtitle_text = document.createTextNode(key);
+                    dtitle.appendChild(dtitle_text);
+                    // 创建 dd 元素；定义描述 = 元素节点 + 文本节点
+                    var ddesc = document.createElement('dd');
+                    var ddesc_text = document.createTextNode(definition);
+                    ddesc.appendChild(ddesc_text);
+                    // 把新创建的 dt 和 dd 元素追加到稍早创建的 dl 元素上
+                    dlist.appendChild(dtitle);
+                    dlist.appendChild(ddesc);
+
+                    }
+                    // 创建标题
+                    var header = document.createElement('h2');
+                    var header_text = document.createTextNode('Abbreviations')
+                    header.appendChild(header_text);
+                    // 把标题、定义了列表添加到页面主题
+                    document.getElementsByTagName('body')[0]
+                    document.body.appendChild(header);
+                    document.body.appendChild(dlist);
+                }
+
+            addLoadEvent(displayAbbreviations);
+
+            function addLoadEvent(func) {
+                var oldonload = window.onload ;
+                if (typeof window.onload != 'function'){
+                    window.onload = func;
+                } else {
+                    window.onload = function() {
+                        oldonload();
+                        func();
+                    }
+                }
+            }
+
+            // 交替颜色
+            function stripeTables() {
+                var tables = document.getElementsByTagName('table');
+                var odd,rows
+                for (var i = 0; i < tables.length; i++) {
+                    odd = false;
+                    rows = tables[i].getElementsByTagName('tr');
+                    for (var j = 0; j < rows.length; j++) {
+                        if(odd == true) {
+                            // rows[j].style.backgroundColor = '#ffc';
+                            // 一行执行一行不执行；
+                            addClass(rows[j],'odd');
+                            odd = false;
+                        } else {
+                            odd = true;
+                        }
+                    }
+                }
+            }
+            function addClass(element,value) {
+                if(!element.className) {
+                    element.className = value;
+                } else {
+                    var newClassName;
+                    newClassName = element.className;
+                    newClassName += ' ';
+                    newClassName +=  value;
+                    element.className = newClassName
+                }
+            }
+            addLoadEvent(stripeTables);
+
+            function highlightRows() {
+                var rows = document.getElementsByTagName('tr');
+                for (var i = 0; i < rows.length; i++) {
+                    // rows[i].onmouseover = function() {
+                    //     this.style.fontWeight = 'bold';
+                    // }
+                    // rows[i].onmouseout = function() {
+                    //     this.style.fontWeight = 'normal';
+                    // }
+                    rows[i].addEventListener('mouseover',function(event) {
+                        var target = event.target;
+                        target.style.fontWeight = 'bold';
+                    })
+                    rows[i].addEventListener('mouseout',function(event) {
+                        var target = event.target;
+                        target.style.fontWeight = 'normal';
+                    })
+                }
+            }
+            addLoadEvent(highlightRows);
+        </script>
+    </body>
+</html>

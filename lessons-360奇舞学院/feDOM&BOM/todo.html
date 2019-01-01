@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+            html {
+                font-size: 20px;
+            }
+            input, button {
+                font-size: 20px;
+            }
+            ul {
+                list-style-type: none;
+            }
+            ul > li:hover {
+                background: black;
+                color: #fff;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="buttons">
+            <button>insert</button>
+            <button disabled= true>delete</button>
+            <button disabled= true>update</button>
+            <input id="rowtext" type="text" name="" value="new row"/>
+        </div>
+        <ul id="datalist">
+            <li><label><input type="checkbox"/>row1</label></li>
+            <li><label><input type="checkbox"/>row2</label></li>
+            <li><label><input type="checkbox"/>row3</label></li>
+            <li><label><input type="checkbox"/>row4</label></li>
+            <li><label><input type="checkbox"/>row5</label></li>
+        </ul>
+        <script src="todo.js" type="text/javascript"></script>
+    </body>
+</html>

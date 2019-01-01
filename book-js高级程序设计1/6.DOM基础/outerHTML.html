@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .item {
+            max-width: 1080px;
+            margin: 0 auto;
+            display: flex;
+        }
+
+        .left {
+            height: 50px;
+            width: 50px;
+            background: #ddd;
+        }
+
+        .right {
+            flex: 1;
+            background: lightblue;
+        }
+    </style>
+</head>
+<body>
+    <div class="item">
+        <div class="left">是否</div>
+        <div class="right">南山南</div>
+    </div>
+<script>
+var item = document.querySelector('.item');
+item.innerText = item.innerText; // 从指定的元素中删除所有的HTML标签
+// <div class="item">
+//     '是否'
+//     <br>
+//     '南山南'
+// </div>
+
+// var item = document.querySelector('.item');
+// item.outerHTML = '<p>皆非</p>'
+</script>
+</body>
+</html>

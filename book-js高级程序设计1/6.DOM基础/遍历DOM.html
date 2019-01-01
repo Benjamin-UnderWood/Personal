@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div id="div1">
+    <p>Hello <b>World!</b></p>
+    <ul>
+        <li>List item1</li>
+        <li>List item2</li>
+        <li>List item3</li>
+    </ul>
+</div>
+<textarea name="" id="text1" cols="40" rows="10"></textarea><br/>
+<input type="button" value="Make List" onclick="makeList()"/>
+
+<script>
+var iterator = null;
+
+function makeList() {
+    var oDiv = document.getElementById('div1');
+    var oFilter = new Object;
+    oFilter.acceptNode = function(oNode) {
+        return (oNode.tagName == 'P') ? 
+                NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+    }
+  
+    iterator = document.createNodeIterator(oDiv, NodeFilter.SHOW_ELEMENT, oFilter, false);
+
+    var oOutput = document.getElementById('text1');
+    var oNode = iterator.nextNode();
+    while(oNode) {
+        oOutput.value += oNode.tagName +'\n';
+        oNode = iterator.nextNode();
+    }
+}
+
+</script>
+</body>
+</html>

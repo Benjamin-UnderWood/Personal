@@ -1,0 +1,69 @@
+<!-- 三个状态 用 红(stop)、 绿(pass)、 黄(wait)表示
+要求用 JavaScript 让三个状态轮流切换
+每个状态停留时间 2s -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+            #traffic > li {
+                display: block;
+            }
+
+            #traffic span{
+                display: inline-block;
+                width: 50px;
+                height: 50px;
+                background-color: gray;
+                margin: 5px;
+                /* 变成圆 */
+                border-radius: 50%;
+            }
+            /* 把状态(和事件)放在父节点上，方便控制 */
+            #traffic.stop li:nth-child(1) span{
+                background-color: #a00;
+            }
+            #traffic.wait li:nth-child(2) span{
+                background-color: #aa0;
+            }
+            #traffic.pass li:nth-child(3) span{
+                background-color: #0a0;
+            }
+        </style>
+    </head>
+    <body>
+        <ul id="traffic" class="wait">
+            <li><span></span></li>
+            <li><span></span></li>
+            <li><span></span></li>
+        </ul>
+        <script type="text/javascript">
+            // 版本四
+            const traffic = document.getElementById('traffic');
+
+            // 高阶函数 function 返回 另一个 function
+            // 作用 过程抽象(版本2 3 做的是 数据抽象，抽象state)
+            // 这里抽象的是 setState 的过程
+            function poll(...fnList){
+                let stateIndex = 0;
+
+                return function(...args){
+                    let fn = fnList[stateIndex++ % fnList.length];
+                    return fn.apply(this, args);
+                }
+            }
+
+            function setState(state){
+                traffic.className = state;
+            }
+            // 这块在调用的时候第一个参数给了一个null,这个是因为 没有对象 去调用这个方法,
+            // 我们只需要用这个方法运算,得到返回的结果就行,.所以直接传递了一个 null 过去
+            let trafficStatePoll = poll(setState.bind(null, 'wait'),
+                                        setState.bind(null, 'stop'),
+                                        setState.bind(null, 'pass'));
+
+            setInterval(trafficStatePoll, 2000);
+        </script>
+    </body>
+</html>

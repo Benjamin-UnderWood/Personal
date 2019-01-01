@@ -1,0 +1,71 @@
+<!-- 三个状态 用 红(stop)、 绿(pass)、 黄(wait)表示
+要求用 JavaScript 让三个状态轮流切换
+每个状态停留时间 2s -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+            #traffic > li {
+                display: block;
+            }
+
+            #traffic span{
+                display: inline-block;
+                width: 50px;
+                height: 50px;
+                background-color: gray;
+                margin: 5px;
+                /* 变成圆 */
+                border-radius: 50%;
+            }
+            /* 把状态(和事件)放在父节点上，方便控制 */
+            #traffic.stop li:nth-child(1) span{
+                background-color: #a00;
+            }
+            #traffic.wait li:nth-child(2) span{
+                background-color: #aa0;
+            }
+            #traffic.pass li:nth-child(3) span{
+                background-color: #0a0;
+            }
+        </style>
+    </head>
+    <body>
+        <ul id="traffic" class="wait">
+            <li><span></span></li>
+            <li><span></span></li>
+            <li><span></span></li>
+        </ul>
+        <script type="text/javascript">
+            // 版本一 过程耦合 callback hell;setTimeout(执行代码，等待时间)
+            // const traffic = document.getElementById('traffic');
+            // (function reset(){
+            //     traffic.clssName = 'wait';
+            //
+            //     setTimeout(function() {
+            //         traffic.className = 'stop';
+            //         setTimeout(function(){
+            //             traffic.className = 'pass';
+            //             setTimeout(reset, 2000)
+            //         }, 2000)
+            //     }, 2000);
+            // })()
+
+            // 版本二 无 callback hell; 状态顺序可调整，stateList 里的顺序，代码逻辑不用动
+            const traffic = document.getElementById('traffic');
+            // 关键是 通过 JavaScript 来控制三个状态；
+            // 未来可以把 stateList 放入配置文件，修改状态只需要到配置文件里改；而不需要改逻辑代码
+            var stateList = ['wait', 'stop', 'pass'];
+
+            var currentStateIndex = 0;
+
+            setInterval(function(){
+                var state = stateList[currentStateIndex];
+                traffic.className = state;
+                currentStateIndex = (currentStateIndex + 1) % stateList.length;
+            }, 2000);
+        </script>
+    </body>
+</html>

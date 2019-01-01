@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <script src="jquery.js"></script>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        // ajax 请求的结果是一个 Promise 对象
+        Promise.all([
+            $.ajax({url: 'data/arr.txt', dataType: 'json'}),
+            $.ajax({url: 'data/json.txt', dataType: 'json'})
+        ]).then(function(results){
+            alert('成功了')
+            let [arr, json] = results;
+            console.log(arr, json);
+        }, function(){
+            alert('至少有一个失败')
+        })
+    </script>
+</html>

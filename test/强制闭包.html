@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <ul>
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+        </ul>
+
+        <script>
+            var log = function() {
+                console.log.apply(console,arguments);
+            }
+            // 情况一
+            // var elements = document.getElementsByTagName("li");
+            // for (var i=0; i < elements.length; i++) {
+            //     log(i);
+            //     log(elements[i]);
+            //     elements[i].onclick = function(event){
+            //         log(event,event.target);
+            //         log(i); // 4 4 4 4
+            //     };
+            // }
+            // 首先 click 是个 异步方法
+            // 每个函数的作用域链中都保存着 return 的活动对象
+            // 终止循环 i 值为 4， 而不是 3
+
+            // 情况二 闭包
+            var elements = document.getElementsByTagName("li");
+              for (var i=0;i<elements.length;i++){
+                  log(i);
+                  elements[i].onclick = function(num){
+                      return function(){
+                      log(num);
+                  };
+              }(i);// 这里的 i 决定，log(num) 的值；
+            }
+            // 依次点击4个li标签，正确显示0 1 2 3
+            //  每次点击 给闭包 注入的 i,是结尾的 括号里的 i,如果指定一个数，那就为一个定值；
+        </script>
+    </body>
+</html>

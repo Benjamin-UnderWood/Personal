@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        div {
+            height: 150px;
+            width: 300px;
+            background-position: center;
+            background-size: cover;
+            background-image: url(../images/2.jpg);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div></div>
+<script>
+    var oDiv = document.querySelector('div');
+    oDiv.addEventListener('mouseover', function(){
+        // oDiv.style.backgroundImage = "url('../images/1.jpg')";
+        oDiv.style.backgroundSize = "120%, 120%";
+    }, false)
+    oDiv.addEventListener('mouseout', function(){
+        console.log('mouseout')
+        // oDiv.style.backgroundImage = "url('../images/2.jpg')";
+        oDiv.style.backgroundSize = "cover";
+    }, false)
+</script>
+</body>
+</html>

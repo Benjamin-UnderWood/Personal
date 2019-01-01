@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        div.special{
+            background: red;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="div1" class="special">This is my original text</div>
+<input type="button" value="Use OuterText" onclick="useOuterText()">
+<script>
+// 通过将outerText赋值给自身，就可以删除元素，并将它替换成包含元素中所有文本的一个节点
+function useOuterText() {
+    var oDiv = document.getElementById('div1');
+    oDiv.outerText = oDiv.outerText;
+    alert(document.getElementById('div1'));
+}
+//  This is my original text
+// <input type="button" value="Use OuterText" onclick="useOuterText()">
+</script>
+</body>
+</html>

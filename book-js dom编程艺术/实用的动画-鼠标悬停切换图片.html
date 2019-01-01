@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+            #slideshow {
+                width: 100px;
+                height: 100px;
+                /* 想让子图片使用绝对位置，通过父元素relative,子元素(0,0)坐标将固定在slideshow的左上角 */
+                position: relative;
+                overflow:  hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Web Design</h1>
+        <p>These are the things you should know.</p>
+        <ol id='linklist'>
+            <li>
+                <a href="structure.html">structure</a>
+            </li>
+            <li>
+                <a href="presentation.html">Presentation</a>
+            </li>
+            <li>
+                <a href="behavior.html">Behavior</a>
+            </li>
+        </ol>
+        </body>
+        <script type="text/javascript">
+            function prepareSlideshow() {
+                if(!document.getElementsByTagName) return false;
+                if(!document.getElementById) return false;
+                if(!document.getElementById('linklist')) return false;
+                // 设置容器 父元素节点
+                var slideshow = document.createElement('div');
+                slideshow.setAttribute('id','slideshow');
+                var preview = document.createElement('img');
+                preview.setAttribute('src','images/topics.jpg');
+                preview.setAttribute('alt','building blocks of web design');
+                preview.setAttribute('id','preview');
+                preview.style.position = 'absolute';
+                slideshow.appendChild(preview);
+                var list = document.getElementById('linklist');
+                insertAfter(slideshow,list);
+                // 取得 列表中 的所有链接
+                var links = list.getElementsByTagName('a');
+                // 为 mouseover 事件添加动画效果
+                links[0].onmouseover = function() {
+                    moveElement('preview',-100,0,10);
+                }
+                links[1].onmouseover = function() {
+                    moveElement('preview',-200,0,10);
+                }
+                links[2].onmouseover = function() {
+                    moveElement('preview',-300,0,10);
+                }
+            }
+            function insertAfter(newElement,targetElement) {
+                var parent = targetElement.parentNode;
+                if (parent.lastChild == targetElement) {
+                    parent.appendChild(newElement);
+                } else {
+                    parent.insertBefore(newElement,targetElement.nextSibling);
+                }
+            }
+
+            function moveElement(elementID,final_x,final_y,interval) {
+                if(!document.getElementById) return false;
+                if(!document.getElementById(elementID)) return false;
+                var elem = document.getElementById(elementID);
+                // 开始时，先进行复位，确保实际执行只有一条 setTimeout 函数调用语句
+                if(elem.movement) {
+                    clearTimeout(elem.movement);
+                }
+                // 检查 elem 元素 left样式属性 和 一个top样式属性 是否存在
+                if (!elem.style.left) {
+                    elem.style.left = '0px';
+                }
+                if (!elem.style.top) {
+                    elem.style.top = '0px';
+                }
+                var xpos = parseInt(elem.style.left);
+                var ypos = parseInt(elem.style.top);
+                var dist = 0;
+                if(xpos == final_x && ypos == final_y) {
+                    return true;
+                }
+                if (xpos < final_x) {
+                    // ceil 保证 当 xpos与final_x 差距小于 10时候，也能移动 1px
+                    dist = Math.ceil((final_x - xpos)/10);
+                    xpos += dist;
+                }
+                if (xpos > final_x) {
+                    dist = Math.ceil((xpos - final_x)/10);
+                    xpos -= dist;
+                }
+                if (ypos < final_y) {
+                    dist = Math.ceil((final_y - ypos)/10);
+                    ypos += dist;
+                }
+                if (ypos > final_y) {
+                    dist = Math.ceil((ypos - final_y)/10);
+                    ypos -= dist;
+                }
+                elem.style.left = xpos + 'px';
+                elem.style.top = ypos + 'px';
+                elem.movement = setTimeout(function(){
+                    moveElement(elementID,final_x,final_y,interval);
+                },interval);
+            }
+
+            function addLoadEvent(func) {
+                var oldonload = window.onload ;
+                if (typeof window.onload != 'function'){
+                    window.onload = func;
+                }else {
+                    window.onload = function() {
+                        oldonload();
+                        func();
+                    }
+                }
+            }
+            addLoadEvent(prepareSlideshow);
+        </script>
+        </div>
+</html>

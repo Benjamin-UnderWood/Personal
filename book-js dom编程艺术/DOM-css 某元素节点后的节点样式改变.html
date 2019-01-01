@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <link rel="stylesheet" href="DOM-css.css">
+    </head>
+    <body>
+        <h1>Hold the front page</h1>
+        <p>This first paragraph leads you in.</p>
+        <p>Now you get the nitty-gritty of the story.</p>
+        <p>The most important information is delivered first.</p>
+        <h1>Extra! Extra!</h1>
+        <p>Further developments are unfolding.</p>
+        <p>You can read all about it here.</p>
+    </body>
+    <script type="text/javascript">
+    function addLoadEvent(func) {
+        var oldonload = window.onload ;
+        if (typeof window.onload != 'function'){
+            window.onload = func;
+        }else {
+            window.onload = function() {
+                oldonload();
+                func();
+            }
+        }
+    }
+    function styleHeaderSiblings(){
+        var headers = document.getElementsByTagName('h1');
+        for (var i = 0; i < headers.length; i++) {
+            // 两个 下一个节点元素，但最后并不会被覆盖，还是呈现了两个
+            var elem = getNextElement(headers[i].nextSibling);
+            // elem.style.fontWeight = 'bold';
+            // elem.style.fontSize = '1.2em';
+            addClass(elem,'intro');
+        }
+    }
+    function addClass(element,value) {
+        if(!element.className) {
+            element.className = value;
+        } else {
+            var newClassName;
+            newClassName = element.className;
+            newClassName += ' ';
+            newClassName +=  value;
+            element.className = newClassName
+        }
+    }
+    addLoadEvent(styleHeaderSiblings);
+    function getNextElement(node) {
+        if(node.nodeType == 1) {
+            return node;
+        }
+        if(node.nextSibling) {
+            return getNextElement(node.nextSibling);
+        }
+        return null;
+    }
+    </script>
+</html>

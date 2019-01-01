@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <link rel="stylesheet" href="styles/slider.css">
+    </head>
+    <body>
+
+        <div id="my-slider" class="slider-list">
+            <ul>
+                <li class="slider-list__item--selected">
+                    <img src="images/sliderImagOne.jpg" alt="">
+                </li>
+                <li class="slider-list__item">
+                    <img src="images/sliderImagTwo.jpg" alt="">
+                </li>
+                <li class="slider-list__item">
+                    <img src="images/sliderImagThree.jpg" alt="">
+                </li>
+                <li class="slider-list__item">
+                    <img src="images/sliderImagFour.jpg" alt="">
+                </li>
+            </ul>
+
+            <!-- 控制流 Ui -->
+            <div class="slide-list__control">
+                <span class="slide-list__control-buttons--selected"></span>
+                <span class="slide-list__control-buttons"></span>
+                <span class="slide-list__control-buttons"></span>
+                <span class="slide-list__control-buttons"></span>
+            </div>
+        </div>
+
+        <!-- 外部测试；由于清晰的 API 故可以很轻松简单的调用，即使我们在组件外设置btn-->
+        <button id="slideNext" type="button" name="button">Next</button>
+        <button id="slidePrevious" type="button" name="button">Previous</button>
+        <!-- 外部测试 addSlideListener；给监听中推入新函数，用于API中回调用 -->
+        <p id="slideStat">当前状态</p>
+
+        <!-- <script type="text/javascript" src="scripts/slider.js"></script> -->
+        <script type="text/javascript" src="scripts/control.js"></script>
+    </body>
+</html>

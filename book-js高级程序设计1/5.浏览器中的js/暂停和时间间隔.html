@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+// var iNum = 0;
+// var iMax = 100;
+// var iIntervalId = null;
+
+// function incNum() {
+//     iNum++;
+//     console.log(iNum)
+//     if(iNum == iMax) {
+//         clearInterval(iIntervalId);
+//     }
+// }
+
+// iIntervalId = setInterval(incNum, 500);
+
+var iNum = 0;
+var iMax = 100;
+
+function incNum() {
+    iNum++;
+    console.log(iNum)
+    if(iNum != iMax) {
+        setTimeout(incNum, 500);
+    }
+}
+
+setTimeout(incNum, 500);
+</script>
+</body>
+</html>

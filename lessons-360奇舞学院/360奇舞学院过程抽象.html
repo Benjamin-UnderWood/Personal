@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <script type="text/javascript">
+        function poll(...fnList){
+            let stateIndex = 0;
+
+            return function(...args){
+                let fn = fnList[stateIndex++ % fnList.length];
+                return fn.apply(this, args);
+            }
+        }
+
+        function a(){return 1};
+        function b(){return 0};
+
+        var toggle = poll(a, b);
+
+        console.log([toggle(), toggle(), toggle()])
+        </script>
+    </body>
+</html>

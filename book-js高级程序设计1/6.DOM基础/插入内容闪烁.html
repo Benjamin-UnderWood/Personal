@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .item {
+            max-width: 1080px;
+            margin: 0 auto;
+            display: flex;
+        }
+
+        .left {
+            height: 50px;
+            width: 50px;
+            background: #ddd;
+        }
+
+        .right {
+            flex: 1;
+            background: lightblue;
+        }
+    </style>
+</head>
+<body>
+    <div class="item">
+        <div class="left"></div>
+        <div class="right"></div>
+    </div>
+<script>
+    var left = document.querySelector('.left');
+    left.addEventListener('click', evt => {
+        console.log(evt);
+        console.log(this); // 箭头函数，this指向全局；非箭头函数，this指向触发事件的元素；
+    }, false)
+
+    var attr = left.getAttribute('class');
+    left.setAttribute('class', 'lefttt');
+
+    // 插入时闪动(往一堆内容里插入一段，会闪动)
+    // setInterval(function() {
+    //     var oP = document.createElement('p');
+    //     var oText = document.createTextNode('pragraph');
+    //     oP.appendChild(oText);
+    //     document.body.appendChild(oP);
+    // }, 2000)
+    
+    document.onclick = function() { // 没直接命名参数，也能访问事件对象
+        var oEvent = arguments[0];
+        console.log(oEvent);
+    }
+</script>
+</body>
+</html>

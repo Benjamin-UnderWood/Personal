@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<title></title>
+<script src="jquery.js"></script>
+</head>
+<body>
+<script>
+// let p1 = new Promise(function(resolve, reject){
+//     $.ajax({
+//         url: 'data/arr.text',
+//         dataType: 'json',
+//         success(arr){
+//             resolve(arr);
+//         },
+//         error(err){
+//             reject(err);
+//         }
+//     })
+// });
+//
+// let p2 = new Promise(function(resolve, reject){
+//     $.ajax({
+//         url: 'data/json.text',
+//         dataType: 'json',
+//         success(json){
+//             resolve(json);
+//         },
+//         error(err){
+//             reject(err);
+//         }
+//     })
+// });
+
+// 上述两个Promise 对象实例，只有地址不一样
+// 我们自己封一个函数; 将url 传参
+function createPrmoise(url) {
+    return new Promise(function(resolve, reject){
+        $.ajax({
+            url: url, // 当遇到名字与值一样的情况可以只留一个
+            dataType: 'json',
+            success(arr){
+                resolve(arr);
+            },
+            error(err){
+                reject(err);
+            }
+        })
+    });
+}
+
+Promise.all([ // 所有都成功了才算成功
+    createPrmoise('data/arr.txt'),
+    createPrmoise('data/json.txt')
+]).then(function (arr){ // 全都成功了里面会给我们一个数组
+    alert('全都成功了');
+    console.log(arr);
+    let [res1, res2] = arr;// 解构赋值
+    alert(res1); // 我们的数组
+    alert(res2); // JSON 直接alert 出不来
+    // 数组里面装的就是我们的arr，第二个就是我们的 json
+}, function(err){
+    alert('至少有一个失败了');
+});
+</script>
+</body>
+</html>

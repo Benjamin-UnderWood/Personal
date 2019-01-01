@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <script src="runner.js"></script>
+        <script src="jquery.js"></script>
+    </head>
+    <body>
+        <script>
+            runner(function *(){ // runner 是与 promise 配合使用的库； jquery ajax 返回的是一个 promise 对象
+                let data1 = yield $.ajax({url: 'data/1.txt', dataType: 'json'});
+                let data2 = yield $.ajax({url: 'data/2.txt', dataType: 'json'});
+                let data3 = yield $.ajax({url: 'data/3.txt', dataType: 'json'});
+
+                console.log(data1, data2, data3);
+            })
+            // generator 好处，可以像写同步操作一样来解决异步
+            // 把 ajax请求返回的 promise 对象(阶段性成果)，yield 给 runner；是runner 在执行 generator 函数
+        </script>
+    </body>
+</html>

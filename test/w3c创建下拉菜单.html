@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <div class="menu">
+          <div id="item">Drop-Down</div>
+          <div id="submenu">
+            <a href="#">Link 1</a>
+            <a href="#">Link 2</a>
+            <a href="#">Link 3</a>
+          </div>
+        </div>
+        <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+        <script type="text/javascript">
+        // 处理id =“item”元素的点击事件，并在500毫秒内打开/关闭子菜单。
+        $("#item").click(function() {
+            $("#submenu").slideToggle(500);
+        });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <!-- Cookie API 库 -->
+    <!-- 由于原生js Cookie 没有好用的 API,因此用了库；下面的get和set方法都是库里的API -->
+    <script src="https://s0.ssl.qhres.com/!ef5df9f6/js.cookie.js"></script>
+    <body>
+        <!-- 每次刷新会显示你访问网站多少次 -->
+        <!-- 谷歌失效，火狐有效 -->
+        <h3>你访问了本站 <em>0</em> 次</h3>
+        <button id="removeCookie">清除</button>
+        <script type="text/javascript">
+
+        const cookieKey = 'visitTimes'; // 属性的作用，叫什么不重要，得赋个值
+
+        // Cookies 保存了它的属性 cookieKey 的值；并且与网站关联，刷新后，值还被保存
+        function count() {
+            // |操作符，无论第一个条件是否为真，程序都会去执行判断第二个条件表达式
+            console.log(Cookies.get(cookieKey)); // 刚打开时 undefined
+            // 刷新一次 上述变 1；再刷新 变2；....
+            // (0 || undefined)=== undefined  结果true
+            // 0 | undefined === 0 结果true
+            let times = (0 | Cookies.get(cookieKey)) + 1;
+
+            // let times = (0 || Cookies.get(cookieKey)) + 1;
+            //一开始 0 || undefined + 1 结果 NaN
+            // 刷新一次末尾加个 1; NaN1 NaN11 NaN111 ....
+
+            let showTimes = document.querySelector('h3 > em');
+
+            showTimes.innerHTML = times;
+            // 设置 cookieKey 的值 等于 times
+            Cookies.set(cookieKey, times); // times 是我们传入的 数量；
+            // 第一次传入 times = 1; 然后 cookieKey 变成 1；
+            // 刷新后 Cookies.get(cookieKey) 从 undefined 变成 1(访问到了)
+            // 然后 times 变成 2，再传给 Cookies 的 cookieKey 值；
+            // 再刷新，重复上述过程
+        }
+
+        removeCookie.onclick = function() {
+            Cookies.remove(cookieKey);
+            count();
+        }
+
+        count();
+        </script>
+    </body>
+</html>

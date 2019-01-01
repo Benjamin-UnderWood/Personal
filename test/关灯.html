@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+            .mask {
+                position: fixed;
+                top: 0px;
+                left: 0px;
+                z-index: 100;
+                width: 100%;
+                height: 100%;
+                background:black;
+                opacity: 0.0;
+            }
+            .mask-active {
+                opacity: 0.8;
+            }
+            .player {
+                position: relative;
+                z-index: 101;
+                background: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="player">
+            播放器
+        </div>
+        <button type="button" name="button" class = 'mask'>关灯</button>
+        <script type="text/javascript">
+            var button = document.querySelector('button');
+            var klgr = function() {
+                var mask = document.querySelector('.mask');
+                mask.classList.toggle('mask-active');
+                // if (mask.classList.contains('mask-active')) {
+                //     mask.classList.remove('mask-active');
+                // } else {
+                //     mask.classList.add('mask-active')
+                // }
+            }
+            button.addEventListener('click',klgr)
+        </script>
+    </body>
+</html>

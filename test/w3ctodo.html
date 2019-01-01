@@ -1,0 +1,24 @@
+<h1>My To-Do List</h1>
+<input type="text" placeholder="New item" />
+<button id="add">Add</button>
+<ol id="mylist">
+    <!-- <li><button class='rem'>X</button></li> -->
+</ol>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript">
+    $(function() {
+        $("#add").on("click", function() {
+        var val = $("input").val();
+        if(val !== '') {
+          var elem = $("<li></li>").text(val);
+          $(elem).append("<button class='rem'>X</button>");
+          $("#mylist").append(elem);
+          // 复原 这一步 很有意思
+          $("input").val("");
+          $(".rem").on("click", function() {
+              $(this).parent().remove();
+          });
+        }
+        });
+    });
+</script>

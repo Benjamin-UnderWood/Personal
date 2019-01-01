@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <script>
+            function *炒菜(菜市场买回来的){
+                洗菜->洗好的菜
+
+                let 干净的菜 = yield  洗好的菜;
+
+                干净的菜 -> 切 -> 丝
+
+                let 切好的菜 = yield 丝；
+
+                切好的菜->炒->熟的菜
+
+                return 熟的菜;
+
+                // yield一墙之隔
+                // 最初的东西(原料)，走参数；最后的东西，走return(成果)
+            }
+        </script>
+    </body>
+</html>

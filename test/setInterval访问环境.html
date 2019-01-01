@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <button>Click</button>
+    </body>
+    <script>
+        const btn = document.querySelector('button');
+
+        // btn.addEventListener('click',evt => {
+        //     const btnText = btn.innerHTML;
+        //     // console.log(btnText);
+
+        //     print();
+        // })
+
+        // function print(){
+        //     console.log(btnText); // 显示 btnText 虽然 print 在 btn 绑定事件函数里面 调用；
+        //     // 但并不是在那里 声明的，因此它的作用域里并没有 btnText
+        // }
+
+        // 改成这样
+        btn.addEventListener('click',evt => {
+            const btnText = btn.innerHTML;
+            // console.log(btnText);
+            console.log(this); // window
+
+            (function print(){
+                console.log(btnText);
+            })();
+        })
+
+        // 点击正确返回； 说明 print 函数能访问到其定义时候的外部环境，即能访问到 btnText;
+    </script>
+</html>

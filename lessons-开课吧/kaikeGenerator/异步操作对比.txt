@@ -1,0 +1,125 @@
+异步操作
+1.回调地狱
+2.Promise
+3.generator
+
+// 回调
+$ajax({
+    url: xxx,
+    dataType:'json',
+    success(data1) {
+        $ajax({
+            url: xxx,
+            dataType:'json',
+            success(data2) {
+                $ajax({
+                    url: xxx,
+                    dataType:'json',
+                    success(data3) {
+                        // 完事儿
+                    },
+                    error(){
+                        alert('错了')；
+                    }
+                })
+            },
+            error(){
+                alert('错了')；
+            }
+        })
+    },
+    error(){
+        alert('错了')；
+    }
+})
+
+
+// Promsie
+Promsie.all([
+    $.ajax({url: xxx,dataType: 'json'}),
+    $.ajax({url: xxx,dataType: 'json'}),
+    $.ajax({url: xxx,dataType: 'json'}),
+]).then(results=>{
+    // 完事儿
+}, err=>{
+    alert('错了')
+})
+
+
+// generator
+runner(function *(){
+    let data1 = yield $ajax({url: xxx, dataType: 'json'});
+    let data2 = yield $ajax({url: xxx, dataType: 'json'});
+    let data3 = yield $ajax({url: xxx, dataType: 'json'});
+
+    // 完事儿
+})
+
+--------------------------------------------------------------------------------
+// 带逻辑的读取 普通回调
+$.ajax({url: 'getUseerData', dataType: 'json', success(userData){// 回调},error(ree){
+    if(userData.type == 'VIP'){
+        $ajax({url: 'getVIPItems', dataType: 'json', success(items){  // VIP 数据
+            // 生成列表、显示...
+        },. error(err){
+            alert('错了')
+        }})
+    } else {
+        $ajax({url: 'getItems', dataType: 'json', success(items){     // 普通数据
+            // 生成列表、显示...
+        },. error(err){
+            alert('错了')
+        }})
+    }
+    alert('错了');
+}})
+
+
+
+// 带逻辑的读取 Promsie
+Promsie.all([
+    $.ajax({url: 'getUseerData',dataType: 'json'})
+]).then(results=>{
+    let userData = results[0];
+
+    if(userData.type == 'VIP') {
+        Promise.all([
+            $.ajax({url: 'getVIPItems', dataType: 'json'}) // VIPItems
+        ]).then(result=>{
+            let items = results[0];
+            // 生成列表，显示....
+        }, err=>{
+            alert('错了')
+        })
+    } else {
+        Promise.all([
+            $.ajax({url: 'getItems', dataType: 'json'}) // 普通 Itmes
+        ]).then(result=>{
+            let items = results[0];
+            // 生成列表，显示....
+        }, err=>{
+            alert('错了')
+        })
+    }
+}, err=>{
+    alert('错了')
+})
+
+
+// 带逻辑的读取 generator
+runner(function *(){ // generator 函数不能写成箭头函数
+    let userData = yield $ajax({url: 'getUseerData', dataType: 'json'});
+
+    if(userData.type == 'VIP') {
+        let itmes = yield $.ajax({url:'getVIPItems', dataType: 'json'})
+    } else {
+        let itmes = yield $.ajax({url:'getItems', dataType: 'json'})
+    }
+
+    // 生成列表，显示...
+})
+
+// Prmoise 一次读一堆
+
+// generator —— 逻辑性
+// generator 本质上是 Promise ，是Promise的一个小小的封装

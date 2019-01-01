@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<form action="">
+    <input type="text" id="txtAreaCode" maxlength="3"
+    onkeyup="tabForward(this)"/>
+    <input type="text" id="txtAreaCode" maxlength="3"
+        onkeyup="tabForward(this)"/>
+    <input type="text" id="txtAreaCode" maxlength="4"
+        onkeyup="tabForward(this)"/>
+</form>
+<script>
+tabForward = function(oTextbox) {
+    var oForm = oTextbox.form;
+    // 确保textbox不是表单元素中的最后一个
+    if (oForm.elements[oForm.elements.length-1] !== oTextbox 
+        && oTextbox.value.length === parseInt(oTextbox.getAttribute('maxlength'))) { // 长度与字符串
+            for (var i=0; i < oForm.elements.length; i++) {
+                if(oForm.elements[i] === oTextbox) {
+                    for(var j=i+1; j < oForm.elements.length; j++) { // 当前文本框的字符达到最大值，调用下一个非隐藏的文本框
+                        if (oForm.elements[j].type !== 'hidden') {
+                            oForm.elements[j].focus();
+                            return;
+                        }
+                    }
+                }
+            }
+        } 
+}
+</script>
+</body>
+</html>

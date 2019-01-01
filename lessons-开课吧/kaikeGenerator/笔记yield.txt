@@ -1,0 +1,9 @@
+generator
+
+yield 传参、返回
+
+yield 传参 next里
+
+yield 返回 中间结果(阶段性成果)
+
+函数参数输入 - yield 传参 - yield 中间结果 - yield... - yield... - 函数结果输出 return

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<input type="text" invalidchars="0123456789"
+       onkeypress="return blockChars(this, event)"/><br/>
+<input type="text" invalidchars="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+       onkeypress="return blockChars(this, event)"/><br/>
+<input type="text" invalidchars="abcdefghijklmnopqrstuvwxyz"
+       onkeypress="return blockChars(this, event)"/><br/>
+<script>
+function blockChars(oTextbox, oEvent) {
+    var sInvalidChars = oTextbox.getAttribute('invalidchars');
+    var sChar = String.fromCharCode(oEvent.charCode);
+    
+    var bIsValidChar = sInvalidChars.indexOf(sChar) == -1;
+    return bIsValidChar || oEvent.ctrlKey; // ctrl + C 之类的，不能阻止
+}
+</script>
+</body>
+</html>

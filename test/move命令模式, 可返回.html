@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style type="text/css">
+	*{
+		margin: 0;
+		padding: 0;
+
+	}
+
+	input {
+		padding: 0;
+		margin: 0;
+		border: 0;
+		width: 100%;
+		height: 100%;
+		vertical-align: top;
+	}
+
+	input:focus {
+		outline: none;
+	}
+
+	.ctrl-btn {
+		position: absolute;
+		top: 50px;
+		width: 50px;
+		height: 20px;
+		line-height: 20px;
+		cursor: pointer;
+		background: #ddd;
+		color: #fff;
+		border-radius: 3px;
+		text-align: center;
+	}
+
+	#moveBtn {
+		left: 50px;
+	}
+
+	#backBtn {
+		left: 120px;
+	}
+
+	.ctrl-input {
+		position: absolute;
+		top: 50px;
+		width: 150px;
+		height: 20px;
+		outline: 1px solid seagreen;
+		padding: 0 10px;
+	}
+
+	#posInput {
+		left: 200px;
+	}
+
+	.box {
+		position: absolute;
+		width:15px;
+		height: 15px;
+		background: yellow;
+		border: 1px dashed black;
+		opacity: 0.5;
+	}
+
+	#box {
+		top: 20px;
+		left: 50px;
+	}
+	</style>
+</head>
+<body>
+<div id="moveBtn" class="ctrl-btn">
+	move
+</div>
+<div id="backBtn" class="ctrl-btn">
+	back
+</div>
+<div id="posInput" class="ctrl-input">
+	<input id="pos" type="text"/>
+</div>
+<div id='box' class="box">
+</div>
+<script>
+	window.onload = function () {
+		// getComputedStyle返回的对象是只读的style属性
+		// getBoundingClientRect 返回一个矩形对象，包含四个属性：left、top、right和bottom,
+		// 分别表示元素各边与页面上边和左边的距离
+
+		const tween = {
+			linear: function( t, b, c, d ){
+				return c*t/d + b;
+			},
+			easeIn: function( t, b, c, d ){
+				return c * ( t /= d ) * t + b;
+			},
+			strongEaseIn: function(t, b, c, d){
+				return c * ( t /= d ) * t * t * t * t + b;
+			},
+			strongEaseOut: function(t, b, c, d){
+				return c * ( ( t = t / d - 1) * t * t * t * t + 1 ) + b;
+			},
+			sineaseIn: function( t, b, c, d ){
+				return c * ( t /= d) * t * t + b;
+			},
+			sineaseOut: function(t,b,c,d){
+				return c * ( ( t = t / d - 1) * t * t + 1 ) + b;
+			}
+		};
+
+		const Animate = function(dom) {
+			this.dom = dom;             // 进行运动的 dom 节点
+			this.startTime = 0;         // 动画开始时间
+			this.startPos = 0;          // 动画开始时，dom 节点的位置，即 dom 的初始位置
+			this.endPos = 0;            // 动画结束时，dom 节点的位置，即 dom 的目标位置
+			this.propertyName = null;   // dom 节点需要被改变的 css 属性名
+			this.easing = null;         // 缓存算法
+			this.duration = null;       // 动画持续时间
+		};
+
+		// 在动画被启动的瞬间，要记录一些信息，供缓动算法在以后计算小球当前位置的时候使用。
+		// 在记录完这些信息之后，此方法还要负责启动定时器。
+		Animate.prototype.start = function (propertyName, endPos, duration, easing) {
+			this.startTime = +new Date;          // 动画重启时间
+			this.startPos = this.dom.getBoundingClientRect()[propertyName]; // dom 节点初始位置
+			this.propertyName = propertyName;    // dom 节点需要被改变得 CSS 属性名
+			this.endPos = endPos;                // dom 节点目标位置
+			this.duration = duration;            // 动画持续时间
+			this.easing = tween[easing];         // 缓存算法 策略模式~
+
+			var self = this;
+			var timeId = setInterval(function () {   // 启动定时器, 开始执行动画
+				if(self.step() === false) {          // 如果动画已结束，则清除定时器
+					clearInterval(timeId);
+				}
+			}, 19);
+		};
+
+		Animate.prototype.step = function () {
+			var t = +new Date;   // 取得当前时间
+			if (t >= this.startTime + this.duration) {
+				this.update(this.endPos);   // 更新小球的CSS属性值
+				return false; // 可以通知Animate.prototype.start 方法清除定时器
+			}
+			var pos = this.easing(t - this.startTime, this.startPos,
+				this.endPos - this.startPos, this.duration);
+			// pos 为小球当前位置
+			this.update(pos);    // 更新小球的CSS属性值
+		};
+
+		Animate.prototype.update = function (pos) {
+			this.dom.style[this.propertyName] = pos + 'px';
+		};
+
+		const box = document.getElementById('box');
+		let pos = document.getElementById('pos');
+		// ctrl btn
+		const moveBtn = document.getElementById('moveBtn');
+		const backBtn = document.getElementById('backBtn');
+
+		/**
+		 * @param {object} receiver
+		 * @param {number} pos
+		 * */
+		const MoveCommand = function (receiver, pos) { // pos为初始位置
+			this.receiver = receiver;
+			this.pos = pos; // input 对象
+			this.oldPos = null; // 当前位置
+		};
+
+		MoveCommand.prototype.execute = function () {
+			this.receiver.start('left', this.pos, 1000, 'strongEaseOut');
+			// 放在start下面, 要不然propertyName未传入, getBoundingClientRect()[null] 为 undefined
+			this.oldPos = this.receiver.dom.getBoundingClientRect()[ this.receiver.propertyName ];
+			console.log(this.oldPos);
+			// 记录小球开始移动前的位置
+		};
+
+		MoveCommand.prototype.undo = function () {
+			this.receiver.start( 'left', this.oldPos, 1000, 'strongEaseOut' );
+			// 回到小球移动前记录的位置
+		};
+
+		var moveCommand;
+
+		moveBtn.onclick = function () {
+			const animate = new Animate(box);
+			moveCommand = new MoveCommand(animate, pos.value);
+			moveCommand.execute();
+		};
+
+		backBtn.onclick = function () {
+			console.log('back');
+			moveCommand.undo();
+		}
+
+		// startMove(box, { left: 500 }, function () {
+		// 	startMove(box, { left: 300 });
+		// });
+
+
+	}
+</script>
+</body>
+</html>

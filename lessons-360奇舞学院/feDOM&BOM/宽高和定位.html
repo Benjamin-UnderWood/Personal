@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        p {
+            margin: 0;
+            padding: 0;
+        }
+
+        #outer {
+            display: inline-block;
+            width: 200px;
+            height: 200px;
+            margin: 10px;
+            background: blue;
+            text-align: center;
+            border: solid 5px green;
+        }
+
+        #inner {
+            display: inline-block;
+            width: 100px;
+            height: 100%; /* 200px 继承而来 */
+            /* 不包括 border */
+            background: red;
+            overflow: scroll; /*隐藏超出部分*/
+            border: solid 5px green; /*若没有 border，则完美嵌在outer里*/
+        }
+        </style>
+    </head>
+    <body>
+        <p id="atext">This is a text</p>
+        <div id="outer">
+            <div id="inner">
+                <p>aaa</p>
+                <p>aaa</p>
+                <p>aaa</p>
+                <p>aaa</p>
+                <p>aaa</p>
+                <p>aaa</p>
+                <p>aaa</p>
+                <p>aaa</p>
+                <p>aaa</p>
+                <p>aaa</p>
+                <p>aaa</p>
+                <p>aaa</p>
+                <p>aaa</p>
+                <p>aaa</p>
+                <p>aaa</p>
+                <p>aaa</p>
+            </div>
+        </div>
+        <script type="text/javascript">
+        setTimeout(function() {
+
+            const p = document.getElementById('atext');
+            console.log([p.style.width, p.style.height]); //访问不到，没有直接嵌套在标签
+
+            const styleP = window.getComputedStyle(p); // 能算出来
+            console.log([styleP.width, styleP.height]); //['1920px', '20px']
+
+            console.log([p.clientWidth, p.clientHeight]);// [1920, 20]
+            console.log([p.offsetWidth, p.offsetHeight]);// [1920, 20]
+            console.log([p.scrollWidth, p.scrollHeight]);// [1920, 20]
+
+            console.log('---------')
+
+            console.log([outer.clientWidth, outer.clientHeight]);// [200, 200]
+            console.log([outer.offsetWidth, outer.offsetHeight]);// [210, 210] 加border
+            console.log([outer.scrollWidth, outer.scrollHeight]);// [200, 210] !!!
+
+            console.log('---------')
+
+            console.log([inner.clientWidth, inner.clientHeight]);// [83, 183] 内容可见区，不包括滚动条宽高
+            console.log([inner.offsetWidth, inner.offsetHeight]);// [110, 210]
+            console.log([inner.scrollWidth, inner.scrollHeight]);// [83, 320]
+
+        }, 100);
+        </script>
+    </body>
+</html>

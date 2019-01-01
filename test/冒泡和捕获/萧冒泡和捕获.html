@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>事件冒泡和事件捕获</title>
+        <style>
+        #id1 {
+            background: lightblue;
+            padding: 20px;
+        }
+        #id2 {
+            background: lightyellow;
+            padding: 20px;
+        }
+        </style>
+    </head>
+    <body>
+        <div id='id1'>
+            <div id="id2">
+                <button id='id3'>id3 按钮</button>
+            </div>
+        </div>
+        <script>
+        var id1 = document.querySelector('#id1')
+        var id2 = document.querySelector('#id2')
+        var id3 = document.querySelector('#id3')
+        id1.addEventListener('click', function(event){
+            console.log('click id1', event)
+        })
+        id2.addEventListener('click', function(event){
+            console.log('click id2', event)
+        })
+        id3.addEventListener('click', function(event){
+            console.log('click id3', event)
+            // event.cancelBubble = true
+            // 执行到 capture click id3 阶段，就不再往外冒泡了
+        })
+
+        // 事件捕获是 addEventListener 的第三个参数 useCapture
+        id1.addEventListener('click', function(event){
+            console.log('capture click id1', event)
+        }, true)
+        id2.addEventListener('click', function(event){
+            console.log('capture click id2', event)
+        }, true)
+        id3.addEventListener('click', function(event){
+            console.log('capture click id3', event)
+        }, true)
+        </script>
+    </body>
+</html>
+<!-- 点击 id3 按钮 响应的顺序为
+capture click id1 MouseEvent {isTrusted: true, screenX: 88, screenY: 145, clientX: 88, clientY: 54, …}
+capture click id2 MouseEvent {isTrusted: true, screenX: 88, screenY: 145, clientX: 88, clientY: 54, …}
+click id3 MouseEvent {isTrusted: true, screenX: 88, screenY: 145, clientX: 88, clientY: 54, …}
+capture click id3 MouseEvent {isTrusted: true, screenX: 88, screenY: 145, clientX: 88, clientY: 54, …}
+click id2 MouseEvent {isTrusted: true, screenX: 88, screenY: 145, clientX: 88, clientY: 54, …}
+click id1 MouseEvent {isTrusted: true, screenX: 88, screenY: 145, clientX: 88, clientY: 54, …}
+-->

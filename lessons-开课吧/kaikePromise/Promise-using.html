@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <script src="jquery.js"></script>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        // let date = new Date();
+        // let arr = new Array();
+        let p = new Promise(function (resolve, reject){
+            // 异步代码(你的异步代码)
+            // resolve —— 成功了
+            // reject —— 失败了
+            // alert(resolve);
+
+            $.ajax({
+                url: 'data/arr.txt', // txt 与 text相等这里
+                dataType: 'json',
+                success(arr){
+                    resolve(arr);    // 成功时候调用 resolve
+                },
+                error(err) {
+                    reject(err);     // 失败时候调用 reject
+                }
+            })
+        });
+
+        // 当 promise 执行有结果了就会调用 then
+        // 两个函数，第一个成功的时候调用，说白了就是 resolve
+        p.then(function (arr){
+            alert('成功了' + arr);
+        }, function (err){
+            console.log(err);
+            alert('失败了' + err)
+        });
+    </script>
+</html>

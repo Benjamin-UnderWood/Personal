@@ -1,0 +1,901 @@
+let p = new Promise((resolve, reject) => {
+    // 做一些事情
+    // 然后在某些条件下resolve，或者reject
+    if() {
+        resoleve();
+    } else {
+        reject();
+    }
+})
+
+p.then(() => {
+    // 如果p的状态被resolve了，就进入这里
+}, () => {
+    // 如果p的状态被reject
+})
+
+解释一下
+
+第一段调用了promise构造函数，第二段是调用了 promise 实例的 .then 方法
+
+1.构造实例
+构造函数接受一个函数作为参数
+调用构造函数得到实例p的同时，作为参数的函数会立即执行!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+参数函数接受两个回调函数参数 resolve 和 reject
+在参数函数被执行的过程中，如果在其内部调用resolve，会将p的状态变成fulfilled，或者调用
+reject，会将p的状态变成rejected---------------------------------------------------
+
+2.调用then
+调用then可以为实例p注册两种状态的回调函数
+当实例p的状态为fulfilled，会触发第一个函数执行
+当实例p的状态为rejected，则触发第二个函数执行
+
+总结
+
+上面这样构造promise实例，然后调用 .then .then .then 的编写代码方式，就是promise
+
+其基本模式是
+将异步过程转化成promise对象
+
+
+function red() {
+    console.log('red');
+}
+
+function green() {
+    console.log('green');
+}
+
+function yellow() {
+    console.log('yellow');
+}
+
+let light = function(fn, timer) {
+    new Promise(function(resolve) {
+        setTimeout(function() {
+            fn();
+            resolve();
+        }, timer)
+    });
+}
+
+// times 为交替次数
+function start(times) {
+    if (!times) {
+        return;
+    }
+
+times--
+Promise.resolve()
+    .then(() => light(red, 3000))
+    .then(() => light(green, 1000))
+    .then(() => light(yellow, 2000))
+    .then(() => start(times))
+}
+
+start(3)
+
+--------------------------------------------------------------------------------
+
+var promise = new Promise((resolve, reject) => {
+    setTimeout(function() {
+        resolve('完成');
+    }, 10);
+});
+promise.then((msg) => {
+    console.log('first messaeg: ' + msg);
+}).then((msg) => {
+    console.log('second messaeg: ' + msg);
+});
+
+// 运行结果
+first messaeg: 完成
+second messaeg: undefined
+
+我们发现第二个then方法接收到的最终值是undefined，为什么呢？
+看看第一个then方法调用后返回的promise状态如下：
+[[PromiseStatus]]:"resolved"
+[[PromiseValue]]:undefined
+
+发现调用第一个then方法后，返回promise最终值为undefined，传递给第二个then的回调，
+如果把上面的例子稍加改动：
+
+var promise = new Promise((resolve, reject) => {
+    setTimeout(function() {
+        resolve('完成');
+    }, 10);
+});
+
+promise.then((msg) => {
+    console.log('first messaeg: ' + msg);
+    return msg + '第二次'; // 改动
+}).then((msg) => {
+    console.log('second messaeg: ' + msg);
+});
+
+first messaeg: 完成
+second messaeg: 完成第二次
+
+这次两个then方法的回调都接收到了最终值，正如我们前文所说，then 方法返回一个新promise，
+并且该新promise根据其传入的回调执行的返回值，进行决议，而函数未明确return返回值时，
+默认返回的是undefined，这也是上面实例第二个then方法的回调接收undefined参数的原因。
+
+这里使用了链式调用，我们需要明确：共产生三个promise，初始promise，两个then方法分别返回一个promise；!!!!!!!!!
+而第一个then方法返回的新promise是第二个then方法的主体，而不是初始promise。
+
+链式调用
+和jQuery的链式调用一样，Promise设计也支持链式调用，上一步的返回值作为下一步方法调用的主体：
+
+new Promise((resolve, reject) => {
+    setTimeout(()=>{
+        resolve('success');
+    },0);
+}).then((msg) => {
+    return 'second success';
+}).then((msg) => {
+    console.log(msg);
+});
+
+最后输出：second success，初始化promise作为主体调用第一个then方法，
+返回完成状态的新promise其最终值为second success，然后该新promise作为主体调用第二个then方法，
+该方法返回第三个promise，而且该promise最终值为undefined，
+若不清楚为什么，请回到关于Promise.prototype.then和Promise.prototype.catch的介绍。
+
+new Promise((resolve, reject) => {
+    setTimeout(()=>{
+        // resolve('success'); 这是下面这种正规的简写
+        resolve(Promise.resolve('success'));
+    },0);
+}).then((msg) => {
+    console.log(msg); // success
+    return `second${msg}`;
+}).then((msg) => {
+    console.log(msg); // second success
+});
+--------------------------------------------------------------------------------
+
+决议，完成与拒绝
+
+目前为止，关于Promise是什么，我们应该有了一定的认识，
+这里，需要再次说明的是Promise的三个重要概念及其关系：!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+决议（resolve）,完成（fulfill）,拒绝（reject）。
+
+完成与拒绝是Promise可能处于的两种状态；
+决议是一个过程，是Promise由 等待状态 变更为 完成或拒绝状态 的一个过程；！！！！！！！！
+静态方法 Promise.resolve 描述的就是一个决议过程，而 Promise 构造函数，传入的回调函数的两个参数：
+resolve和reject，一个是完成函数，一个是拒绝函数，
+这里令人疑惑的是为什么这里依然使用resolve而不是fulfill，我们通过一个例子解释这个问题:
+
+var promise = new Promise((resolve, reject) => {
+    resolve(Promise.reject('failed')); // 依然使用 resolve
+});
+promise.then((msg) => {
+    // 如果p的状态被resolve了，就进入这里
+    console.log('成功') // 测试用; 没有输出
+    console.log('完成：' + msg); // 没有输出
+}, (reason) => {
+    // 如果p的状态被reject
+    console.log('拒绝') // 测试用；有输出 拒绝
+    console.log('拒绝：' + reason); // 拒绝：failed
+});
+
+// 输出结果
+拒绝：failed
+[[PromiseStatus]]:"resolved"
+[[PromiseValue]]:undefined
+
+上例中，在创建一个Promise时，给resolve函数传递的是一个拒绝Promise，(Promsise.resolve 决议过程)
+此时我们发现promise状态是rejected，所以这里第一个参数函数执行，
+完成的是一个更接近决议的过程（可以参考前文讲述的决议过程），
+所以命名为resolve是更合理的；而第二个参数函数，则只是拒绝该promise:
+
+var promise = new Promise((resolve, reject) => {
+    reject(Promise.resolve('success'));
+    // 相当于
+    // resolve(Promise.reject(Promise.resolve('success')))
+});
+promise.then((msg) => {
+    console.log('完成：' + msg);
+}, (reason) => {
+    console.log('拒绝：' + reason); // 拒绝：[object Promise]
+});
+// 输出结果
+拒绝：[object Promise] // Promise.resolve('success') 是 [object Promise]
+[[PromiseStatus]]:"resolved"
+[[PromiseValue]]:undefined
+
+reject函数并不会处理 参数，而只是直接 将其当做拒绝原因拒绝promise。
+
+var promise = new Promise((resolve, reject) => {
+    // reject('原因');// 相当于下面
+    resolve(Promise.reject('原因')) // resolve 才是决议过程
+});
+promise.then((msg) => {
+    console.log('完成：' + msg);
+}, (reason) => {
+    console.log('拒绝：' + reason); // 拒绝：原因
+});
+
+// 输出结果
+拒绝：原因
+[[PromiseStatus]]:"resolved"
+[[PromiseValue]]:undefined
+
+// 自己尝试
+var promise = new Promise((a, b) => {
+    a('完成');
+})
+
+promise.then((msg) => {
+    console.log(msg); // 完成
+}, (reason) => {
+    console.log(reason);
+})
+----------------------------------------
+var promise = new Promise((a, b) => {
+    b('拒绝');
+})
+
+promise.then((msg) => {
+    console.log(msg);
+}, (reason) => {
+    console.log(reason); // 拒绝
+})
+
+
+--------------------------------------------------------------------------------
+Promise实现
+Promise是什么，怎么样使用就介绍到此，另外一个问题是面试过程中经常也会被提及的：
+如何实现一个Promise，当然，限于篇幅，我们这里只讲思路，不会长篇大论。
+
+构造函数
+首先创建一个构造函数，供实例化创建promise，该构造函数接受一个函数参数，实例化时，会立即调用该函数，
+然后返回一个Promise对象:
+
+var MyPromise = (() => {
+    var value = undefined; // 当前Promise
+    var tasks = []; // 完成回调队列
+    var rejectTasks = []; // 拒绝回调队列
+    var state = 'pending'; // Promise初始为等待态
+
+    // 辅助函数，使异步回调下一轮事件循环执行
+    var nextTick = (callback) => {
+        setTimeout(callback, 0);
+    };
+
+    // 辅助函数，传递Promsie的状态值
+    var ref = (value) => {
+        if (value && typeof value.then === 'function') {
+            // 若状态值为thenable对象或Promise，直接返回
+            return value;
+        }
+        // 否则，将最终值传递给下一个then方法注册的回调函数
+        return {
+            then: function(callback) {
+                return ref(callback(value));
+            }
+        }
+    };
+    var resolve = (val) => {};
+    var reject = (reason) => {};
+
+    function MyPromise(func) {
+        func(resolve.bind(this), reject.bind(this));
+    }
+
+    return MyPromise;
+});
+--------------------------------------------------------------------------------
+
+
+静态方法
+
+在实例化创建Promise时，我们会将构造函数的两个静态方法：resolve和reject传入初始函数，
+接下来需要实现这两个函数：
+
+var resolve = (val) => {
+    if (tasks) {
+        value = ref(val);
+        state = 'resolved'; // 将状态标记为已完成
+        // 依次执行任务回调
+        tasks.forEach((task) => {
+            value = nextTick((val) => {task[0](self.value);});
+        });
+        tasks = undefined; // 决议后状态不可变
+
+        return this;
+    }
+};
+var reject = (reason) => {
+    if (tasks) {
+        value = ref(reason);
+        state = 'rejected'; // 将状态标记为已完成
+
+        // 依次执行任务回调
+        tasks.forEach((task) => {
+            nextTick((reason) => {task[1](value);});
+        });
+        tasks = undefined; // 决议后状态不可变
+
+        return this;
+    }
+};
+
+还有另外两个静态方法，原理还是一样，就不细说了。
+--------------------------------------------------------------------------------
+
+实例方法
+
+目前构造函数，和静态方法完成和拒绝Promise都已经实现，接下来需要考虑的是Promise的实例方法和链式调用：
+
+MyPromise.prototype.then = (onFulfilled, onRejected) => {
+    onFulfilled = onFulfilled || function(value) {
+        // 默认的完成回调
+        return value;
+    };
+    onRejected = onRejected || function(reason) {
+        // 默认的拒绝回调
+        return reject(reason);
+    };
+
+    if (tasks) {
+        // 未决议时加入队列
+         tasks.push(onFulfilled);
+         rejectTasks.push(onRejected);
+    } else {
+        // 已决议，直接加入事件循环执行
+         nextTick(() => {
+             if (state === 'resolved') {
+                 value.then(onFulfilled);
+             } else if (state === 'rejected') {
+                 value.then(onRejected);
+             }
+         });
+    }
+
+    return this;
+};
+
+实例
+
+var promise = new MyPromise((resolve, reject) => {
+    setTimeout(() => {
+        resolve('完成');
+    }, 0);
+});
+promise.then((msg) => {console.log(msg);});
+
+本篇由回调函数起，介绍了回调处理异步任务的常见问题，然后介绍Promises/A+规范及Promise使用，
+最后就Promise实现做了简单阐述（之后有机会会详细实现一个Promise），
+花费一周终于把基本知识点介绍完，下一篇将介绍JavaScript异步与生成器实现。
+--------------------------------------------------------------------------------
+
+知乎 澎湖湾
+回调存在的问题可概括为两类：
+
+1.信任问题和控制反转
+2.无法在复杂的异步场景中很好地处理逻辑
+
+可能你比较少意识到的一点是：我们是无法在主程序中掌控对回调的控制权的。
+
+ajax( "..", function(..){    } );
+
+我们对ajax的调用发生于现在，这在 JavaScript 主程序的直接控制之下。
+但ajax里的回调会延迟到将来发生，并且是在第三方（而不是我们的主程序）的控制下——在本例中就是函数 ajax(..) 。
+这种控制权的转移， 被叫做“控制反转”！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+
+1.调用函数过早
+
+调用函数过早的最值得让人注意的问题， 是你不小心定义了一个函数，使得作为函数参数的回调可能延时调用，
+也可能立即调用。 也即你使用了一个可能同步调用， 也可能异步调用的回调。 这样一种难以预测的回调。
+
+大多数时候，我们的函数总是同步的，或者总是异步的
+
+例如foreach()函数总是同步的
+
+array.foreach(
+  x =>  console.log(x)
+)
+console.log(array)
+
+虽然foreach函数的调用需要一定的时间，但array数组的输出一定是在所有的数组元素都被输出之后才输出，
+因为foreach是同步的
+
+又如setTimeout总是异步的：
+setTimeout( () => {  console.log('我是异步的')  }, 0)
+console.log('我是同步的')
+
+我是同步的
+我是异步的
+
+但有些时候，我们仍有可能会写出一个既可能同步， 又可能异步的函数！！！！！！！！！！
+
+我试图用这段代码检查一个输入框内输入的账号是否为空， 如果不为空就用它发起请求。
+（注：callback无论账号是否为空都会被调用）
+
+// 注: 这是一个相当乌托邦,且省略诸多内容的函数
+function login (callback) {
+    // 当取得的账号变量name的值为空时， 立即调用函数，此时callback同步调用）
+    if(!name) {
+        callback();
+        return // name为空时在这里结束函数
+    }
+
+    // 当取得的账号变量name的值不为空时， 在请求成功后调用函数（此时callback异步调用）
+    request('post', name, callback)
+}
+
+相信各位机智的园友凭第六感就能知晓：这种函数绝B不是什么好东西。
+
+的确，这种函数的编写是公认的需要杜绝的，在英语世界里，
+这种可能 同步 也可能 异步调用 的 回调以及包裹它的函数 ， 被称作是 “Zalgo” （一种都市传说中的魔鬼），
+而编写这种函数的行为， 被称作是"release Zalgo" (将Zalgo释放了出来)！！！！！！！！！！！！！！！！！
+
+为什么它如此可怕？ 因为函数的调用时间是不确定的，难以预料的。 我想没有人会喜欢这样难以掌控的代码。
+
+例如：
+var a =1
+zalgoFunction () {
+  // 这里还有很多其他代码,使得a = 2可能被异步调用也可能被同步调用
+    [  a = 2  ]
+  }
+console.log(a)
+
+结果会输出什么呢？ 如果zalgoFunction是同步的， 那么a 显然等于2，
+但如果 zalgoFunction是异步的，那么 a显然等于1。于是， 我们陷入了无法判断调用影响的窘境。
+
+这只是一个极为简单的场景， 如果场景变得相当复杂， 结果又会如何呢？
+
+你可能想说： 我自己写的函数我怎么会不知道呢？
+
+1.很多时候这个不确定的函数来源于它人之手，甚至来源于完全无法核实的第三方代码
+2.在1的基础上，我们把这种不确定的情况稍微变得夸张一些： 这个函数中传入的回调，
+有99%的几率被异步调用， 有1%的几率被同步调用
+
+在1和2的基础上， 你向一个第三方的函数传了一个回调， 然后在经过了一系列不可描述的bug后......
+你可能会问，这个一直异步调用的函数怎么突然同步调用了？？？
+
+--------------------------------------------------------------------------------
+2.调用次数过多
+
+作为一个公司的员工，你需要开发一个网上商城， payWithYourMoney是你在确认购买后执行的扣费的函数，
+由于公司需要对购买的数据做追踪分析，
+这里需要用到一个做数据分析的第三方公司提供的analytics对象中的purchase函数。 代码看起来像这样
+
+analytics.trackPurchase( purchaseData, function(){
+    chargeCreditCard();
+    displayThankyouPage();
+} );
+
+在这情况下，可能我们会忽略的一个事实是： 我们已经把payWithYourMoney 的控制权
+完全交给了analytics.purchase函数了，这让我们的回调“任人宰割”！！！！！！！！！！！！！！
+
+然后上线后的一天， 数据分析公司的一个隐蔽的bug终于显露出来，
+让其中一个原本只执行一次的payWithYourMoney执行了5次，
+这让那个网上商城的客户极为恼怒， 并投诉了你们公司。
+
+可你们公司也很无奈， 这个时候惊奇的发现： payWithYourMoney的控制完全不在自己的手里 ！！！！！
+
+后来， 为了保证只支付一次， 代码改成了这样：
+
+var tracked  = false
+// 判断是否已经分析（支付）过一次了
+analytics.trackPurchase( purchaseData, function(){
+     if (！tracked) {
+         tracked = true
+         chargeCreditCard();
+         displayThankyouPage();
+     }
+} );
+
+但是， 这种方式虽然巧妙， 但却仍不够简洁优雅（后文提到的Promise将改变这一点）
+
+而且， 在回调函数的无数“痛点”中， 它只能规避掉一个， 如果你尝试规避掉所有的“痛点”
+，代码将比上面更加复杂而混乱。
+
+3.太晚调用或根本没有调用
+
+因为你失去了对回调的控制权， 你的回调可能会出现预期之外的过晚调用或者不调用的情况
+（为了处理这个“痛点”你又将混入一些复杂的代码逻辑）
+
+4.吞掉报错
+
+回调内的报错是可能被包裹回调的外部函数捕捉而不报错，
+（为了处理这个“痛点”你又又又将混入一些复杂的代码逻辑）
+
+5.回调根本没有被调用
+
+没办法在复杂的异步场景中很好地表达代码逻辑
+
+哎呀这里我就不说废话了： 在异步中如果你总是依赖回调的话，很容易就写出大家都看不懂，
+ 甚至自己过段时间也看不懂的代码来， 嗯， 就这样
+
+补充 你不知道的js书上
+/* 但是，后来有一个QA 工程师问道：“如果他们根本不调用这个回调怎么办？”哎呦！之
+前你们双方都没有想到这一点。
+然后，你开始沿着这个兔子洞深挖下去，考虑着他们调用你的回调时所有可能的出错情
+况。这里粗略列出了你能想到的分析工具可能出错的情况： */
+
+• 调用回调过早（在追踪之前）；
+• 调用回调过晚（或没有调用）；
+• 调用回调的次数太少或太多（就像你遇到过的问题！）；
+• 没有把所需的环境/ 参数成功传给你的回调函数；
+• 吞掉可能出现的错误或异常；
+• ……
+
+/*这感觉就像是一个麻烦列表，实际上它就是。你可能已经开始慢慢意识到，对于被传给你
+无法信任的工具的每个回调，你都将不得不创建大量的混乱逻辑。
+现在你应该更加明白回调地狱是多像地狱了吧。*/
+
+看个例子，下面的doA到doF都是异步的函数
+doA( function(){
+    doB();
+    doC( function(){
+      doD();
+    } )
+    doE();
+} );
+doF();
+
+// 执行顺序；doA(..) 或doD(..) 我们假定是异步的
+• doA()
+• doF()
+• doB()
+• doC()
+• doE()
+• doD()
+
+看起来很费劲；这并不是我们开发人员的锅， 而是因为人脑的思维方式本来就是线性的，
+而回调却打破了这种线性的思维， 我们需要强制地抛弃我们看到的A -> B -> C -> D -> E的顺序，
+去构建另一套思维。
+
+所以说，异步编程中有大量回调混杂的时候， 所造成的可读性差的问题，是回调本身的“表达方式“造成的
+
+
+如果doA(..) 或doD(..) 实际并不像我们假定的那样是异步的，情况会如何呢？啊，那顺
+序就更麻烦了。如果它们是同步的（或者根据程序当时的状态，只在某些情况下是同步
+的），那么现在运行顺序就是A → C → D → F → E → B。
+
+--------------------------------------------------------------------------------
+回调的局限性仅仅如此？ NO，请看下面：
+
+无法在复杂的异步场景中很好地处理逻辑
+
+对于一些比较常见的异步场景回调也没办法用足够简洁优雅的方式去处理：
+这些场景包括但不限于：链式，门和竞态
+
+1.链式
+首先你肯定知道用回调处理大量存在链式的异步场景的画风是怎样的
+
+setTimeout(function (name) {
+    var catList = name + ','
+    setTimeout(function (name) {
+        catList += name + ',';
+        setTimeout(function (name) {
+            catList += name + ',';
+            setTimeout(function (name) {
+                catList += name + ',';
+                setTimeout(function (name) {
+                    catList += name;
+                    console.log(catList);
+                }, 1, 'Lion');
+            }, 1, 'Snow Leopard');
+        }, 1, 'Lynx');
+    }, 1, 'Jaguar');
+}, 1, 'Panther');
+
+让人一脸蒙逼的回调函数地狱
+很显然，大多数时候你尝试这样做，是因为
+
+你需要通过调用第一层异步函数，取得结果
+
+然后把结果传给第二层异步函数，第二层异步函数也取得结果后
+
+传递结果给第三个异步函数， 。。。。。 N
+
+很显然，我们的代码风格应该是“链式”风格， 但却因为回调的原因被硬生生折腾成了难懂的“嵌套”风格！
+（别担心， 我下面介绍的Promise将改变这一点）
+
+
+// 补充
+setTimeout、setInterval被遗忘的第三个参数
+定时器启动时候，第三个以后的参数是作为第一个func()的参数传进去。
+
+function sum(x, y, z) {
+    console.log(x + y +z);
+}
+
+setTimeout(sum, 1000, 1, 2, 3)
+// 6
+
+ex2
+var div = document.querySelector('div');
+
+setTimeout(function(){
+    div.style.background='red';
+}, 10000, setTimeout(function(){div.style.background='black';}, 5000) );
+
+上面的结果是，div元素内的字体样式5秒后变黑，10秒后再变红。是不是很惊奇，
+因为第三个参数也是一个定时器，5后就会开启。
+和JQuery里面的animate()不同，animate里面回调是执行了前面之后再执行后面的。
+--------------------------------------------------------------------------------
+
+2. 门
+
+什么叫“门”？， 你可以大概理解成： 现在有一群人准备进屋，但只有他们所有人都到齐了，才能“进门”
+也就是： 只有所有的异步操作都完成了， 我们才认为它整体完成了，才能进行下一步操作
+
+下面这个例子里， 我们试图通过两个异步请求操作，分别取得a和b的值并将它们以 a + b 的形式
+（前提： 我们希望当a和b的取值都到达的时候才输出！！）
+
+var a, b;
+
+function foo(x) {
+    a = x * 2;
+    if (a && b) { // 表示 a 和 b 都存在的伪代码
+        baz();
+    }
+}
+
+function bar(y) {
+    b = y * 2;
+    if (a && b) {
+        baz();
+    }
+}
+
+function baz() {
+    console.log( a + b );
+}
+
+// ajax(..)是某个库中的某个Ajax函数
+ajax( "http://some.url.1", foo );
+ajax( "http://some.url.2", bar );
+
+这段代码比前面那段“链式”里的回调地狱好懂多了，但是却依然存在这一些问题：
+
+我们使用了两个 if (a && b) { } 去分别保证baz是在a和b都到达后才执行的，试着思考一下：
+
+两个 if (a && b) { } 的判断条件是否可以合并到一起呢，因为这两个判断条件都试图表达同一种语意： a 和 b都到达，
+能合并成一条语句的话岂不是更加简洁优雅 ？ （一切都在为Promise做铺垫哦~~~~啦啦啦）
+
+--------------------------------------------------------------------------------
+3.竞态
+
+一组异步操作，其中一个完成了， 这组异步操作便算是整体完成了
+
+在下面，我们希望通过异步请求的方式，取得x的值，然后执行foo或者bar，但希望只把foo或者bar其中一个函数执行一次
+
+var flag = true;
+
+function foo(x) {
+    if (flag) {
+        x = x + 1
+        baz(x);
+        flag = false；
+    }
+}
+
+function bar(x) {
+    if (flag) {
+        x = x*2
+        baz(x);
+        flag = false；
+    }
+}
+
+function baz( x ) {
+    console.log( x );
+}
+
+// ajax(..)是某个库中的某个Ajax函数
+ajax( "http://some.url.1", foo );
+ajax( "http://some.url.2", bar );
+
+在这里，我们设置了一个flag， 设它的初始值为true, 这时候foo或者bar在第一次执行的时候，
+是可以进入if内部的代码块并且执行baz函数的， 但在if内部的代码块结束的时候，
+我们把flag的值置为false,这个时候下一个函数就无法进入代码块执行了， 这就是回调对于竞态的处理
+
+正因为回调给我们带来的麻烦很多，ES6引入了Promise的机制：
+--------------------------------------------------------------------------------
+
+一步一步地揭开Promise神秘的面纱
+
+首先让我们回顾一下“回调函数”给我们带来信任危机的原因： 我们无法信任放入回调参数的 函数，
+因为 它没有 强制要求 通过一种确定的（或固定的）形式给我们回调 传递有效的信息参数，
+例如： 异步操作成功的信息， 异步操作失败的信息，等等。
+我们既然都无从得到这些信息， 又怎么能拥有对回调的控制权呢？
+
+没错，我们急需做的的就是得到这些对我们的“回调”至关重要的信息!!!!!!!!!!!!!!!!!!!!!!!!!(promise)
+（异步操作成功的信息， 异步操作失败的信息）!!!!!!!!!!!!!!!
+并且通过一种规则让它们强制地传递给我们的回调
+
+让我们一步步来看看什么是Promise
+
+1.首先Promise是一个可以包含 异步操作 的对象
+new Promise(function() {
+    /* 异步操作  */
+}
+
+2.其次， 这个对象拥有自己的状态（state），可以分别用来表示
+异步操作的“成功”, “失败”，“正在进行中”。
+
+它们是：
+Fulfilled： 成功
+Rejected：拒绝
+Pending： 进行中
+
+3.那怎么控制这三个状态的改变呢？
+
+当 new一个Promise对象的时候， 我们能接收到两个 方法(函数)参数： resolve和reject,
+/*当一个函数被保存为对象的一个属性时，我们称它为一个方法*/
+当调用 resolve方法的时候，会把Promise 对象(实例)的状态从 Pending 变为 Fulfilled, (表示异步操作成功了)
+当调用 reject方法的时候， 会把Promise 对象(实例)的状态从 Pending 变为 Rejected，(表示异步操作失败了)
+而如果这两个函数都没有调用，则Promise 对象(实例)的状态一直是 Pending (表示异步操作正在进行)
+
+我们异步执行的函数可以放在Promise对象里， 然后变成这样
+
+var promise = new Promise(function(resolve, reject) {
+    // 这里是一堆异步操作的代码
+    if (/* 异步操作成功 */){
+        resolve(value);
+    } else {
+        reject(error);
+    }
+});
+
+
+4. 最重要的一点， 我们怎么把这个状态信息传递给我们异步处理后的函数：
+我们刚刚说了， Promise有 fulfilled 和 rejected 两种状态，
+这两种状态分别对应Promise的then方法里的两个回调参数
+
+promise.then(function(value) {
+    // 成功
+}, function(error) {
+    // 失败
+});
+
+第一个参数方法对应fulfilled， 第二个参数方法对应rejected
+
+而且Promise成功的时候（调用resolve）， resolve返回的参数可以被第一个回调接收到， 如上面的value参数!!!!!!
+
+而当Promise失败的时候（调用reject）， reject返回的错误会被传递给第二个回调， 如上面的error!!!!!!
+
+【辩解】： 你可能会说：哎呀我们绕了一圈不是又回到了回调了吗？ Promise好像也不是特别革命性的一个新东西嘛！
+但是， 我们就围绕信任问题来说， Promise的确以一种强制的方式，
+将回调的形式固定了下来（两个方法参数），并且传递了必要的数据（异步取得的值或抛出的错误）给我们的回调。
+
+而这样做，我们已经达到了我们的目的： 相对来说，我们使得回调变得“可控”了， 而不是像单纯使用回调那样，
+因为控制反转而陷入信任危机的噩梦。
+
+打个比方， 让司机们依据对自身的道德要求让不闯红灯，和通过扣分的机制和法律限制闯红灯的现象，
+效果上，这两者之间都是截然不同的。
+--------------------------------------------------------------------------------
+
+Promise是怎么一个个地解决回调带来的问题的
+
+1.回调过早调用-----
+让我们回到那个回调的痛点：我们有可能会写出一个既可能同步执行， 又可能异步执行的“zalgo”函数。!!!!!!!!
+Promise可以自动帮我们避免这个问题：
+
+如果对一个 Promise 调用 then(..) 的时候，即使这个 Promise是立即resolve的函数
+（即Promise内部没有ajax等异步操作，只有同步操作）， 提供给then(..) 的回调也是会被异步调用的，!!!!!!!!!
+这帮助我们省了不少心
+
+2. 回调调用次数过多-----
+
+Promise 的内部机制决定了调用单个Promise的then方法， 回调只会被执行一次，
+因为Promise的状态变化是单向不可逆的!!!!!!!!! 当这个Promise第一次调用resolve方法，
+使得它的状态从pending（正在进行）变成fullfilled（已成功）或者rejected（被拒绝）后，
+它的状态就再也不能变化了
+
+所以你完全不必担心Promise.then( function ) 中的function会被调用多次的情况
+
+
+3. 回调中的报错被吞掉-----
+
+要说明一点的是Promise中的then方法中的error回调被调用的时机有两种情况：
+
+1. Promise中主动调用了reject (有意识地使得Promise的状态被拒绝)，
+这时error回调能够接收到reject方法传来的参数（reject(error)）
+
+2. 在定义的Promise中， 运行时候报错（未预料到的错误）， !!!!!!!!!!
+也会使得Promise的状态被拒绝，从而使得error回调能够接收到捕捉到的错误
+
+ex
+var p = new Promise( function(resolve,reject){
+      foo.bar(); // foo未定义，所以会出错！
+      resolve( 42 ); // 永远不会到达这里 :(
+ } );
+
+p.then(
+   function fulfilled(){
+       // 永远不会到达这里 :(
+   },
+   function rejected(err){
+       // err将会是一个TypeError异常对象来自foo.bar()这一行
+   }
+);
+
+4. 还有一种情况是回调根本就没有被调用，这是可以用Promise的race方法解决（下文将介绍）-----
+
+// 用于超时一个Promise的工具
+function timeoutPromise(delay) {
+    return new Promise( function(resolve,reject){
+        setTimeout( function(){
+            reject( "Timeout!" );
+        }, delay );
+    } );
+}
+
+// 设置foo()超时
+Promise.race([
+    foo(), // 试着开始foo()
+    timeoutPromise( 3000 ) // 给它3秒钟
+]).then(
+    function(){
+      // foo(..)及时完成！
+    },
+    function(err){
+      // 或者foo()被拒绝，或者只是没能按时完成
+      // 查看err来了解是哪种情况
+    }
+);
+
+--------------------------------------------------------------------------------
+Promise的完善的API设计使得它能够简洁优雅地处理相对复杂的场景
+
+1.链式
+
+我们上面说了， 纯回调的一大痛点就是“金字塔回调地狱”， 这种“嵌套风格”的代码丑陋难懂，
+但Promise就可以把这种“嵌套”风格的代码改装成我们喜闻乐见的“链式”风格
+
+因为then函数是可以链式调用的， 你的代码可以变成这样
+
+promise.then(
+  // 第一个异步操作
+).then(
+  // 第二个异步操作
+).then(
+  // 第三个异步操作
+)
+
+而且， 你每一个then里面的异步操作可以返回一个值，传递给下一个异步操作
+getJSON('/post/1.json').then(function(post) {
+    return getJSON(post.commentURL);
+}).then(function(comments) {
+  // some code
+})
+
+第二个then 接收到的comments 参数等于第一个then 里面返回到的 getJSON(post.commentURL);
+
+例如我们上面提到的
+
+1.门
+
+可以使用 Promise.all方法：
+
+Promise.all([
+  promise1,
+  promise2
+])
+.then(([data1, data2]) =>  getDataAndDoSomething (data1,data2)
+
+all方法接收一个Promise数组，并且返回一个新的“大Promise”，
+只有数组里的全部Promise 的状态都转为 Fulfilled(成功)，
+这个“大Promise”的状态才会转为Fulfilled（成功）， 这时候，
+then方法里的成功的回调接收的参数也是数组，分别和数组里的子Promise一一对应，
+例如promise1对应data1，promise2对应data2
+
+而如果任意一个数组里的子Promise失败了， 这个“大Promise”的状态会转为Rejected，
+并且将错误参数传递给then的第二个回调
+
+3.竞态
+可以用Promise.race 方法简单地解决
+
+romise.race 方法同样是将多个Promise实例，包装成一个新的“大Promise”
+
+var p = Promise.race([p1, p2, p3]);
+
+上面代码中，只要p1、p2、p3之中有一个Promise率先改变状态，p的状态就跟着改变。
+那个率先改变的 Promise 实例的返回值，就传递给p的回调函数。

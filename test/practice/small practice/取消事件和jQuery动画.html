@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+                #animate {
+                    width: 100px;
+                    background: lightblue;
+                }
+        </style>
+        <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    </head>
+    <body>
+        <div>a</div>
+        <p id="hide">hide</p>
+        <p id="fade">fade</p>
+        <p id="slide">slide</p>
+        <div id="animate">
+            test animate
+        </div>
+        <script>
+        // 取消事件
+        $("div").click(function() {
+          $("div").append("a");
+          $("div").off("click");
+        });
+        // 点击 a,最后出现 两个 a, 第一次点击之后，事件就被取消绑定了
+        $(function() {
+          $("#hide").click(function() {
+            $("div").toggle(1000);
+          });
+        });
+        // 动画效果
+        $(function() {
+          $("#fade").click(function() {
+            $("div").fadeToggle(1000);
+          });
+        });
+        $(function() {
+          $("p").click(function() {
+            $("div").slideToggle(500);
+          });
+        });
+        $("div").click(function() {
+          $("div").animate({width: '250px'}, 1000);
+        });
+        </script>
+    </body>
+</html>

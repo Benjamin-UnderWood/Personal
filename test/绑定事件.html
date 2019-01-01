@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+            button {
+                display: block;
+                margin: 20px;
+            }
+            a{
+                text-decoration: none;
+                color: black;
+                padding: 5px;
+            }
+             .active{
+                 background-color:lightblue;
+            }
+        </style>
+    </head>
+    <body>
+        <button type="button" name="button">点击我</button>
+        <a href="#" class = 'active'>链接一</a>
+        <a href="#" class = ''>链接二</a>
+        <a href="#" class = ''>链接三</a>
+    </body>
+    <script type="text/javascript">
+        var button = document.querySelector('button');
+        var clicked = function() {
+            console.log('你点到我了');
+        }
+        button.addEventListener('click',clicked);
+
+        var links = document.querySelectorAll('a')
+        for (var i = 0; i < links.length; i++) {
+            links[i].addEventListener('click',function(event){
+                var self = event.target;
+                clearActive();
+                self.classList.add('active');
+            })
+        }
+        var clearActive = function() {
+            var active = document.querySelector('.active');
+            if(active != null) {
+                active.classList.remove('active');
+            }
+        }
+    </script>
+</html>

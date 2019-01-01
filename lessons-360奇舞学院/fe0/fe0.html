@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+        body {
+            background-color: white;
+            font-size: 24px;
+        }
+        #user-list {
+            line-height: 1.5em;
+        }
+        #user-list > li:hover {
+            background-color: rgba(0, 0, 0, 0.3)
+        }
+        #user-list > li.active {
+            background-color: black;
+            color: white;
+        }
+        </style>
+    </head>
+    <body>
+        <ul id="user-list">
+            <li>张三</li>
+            <li>李四</li>
+            <li>王五</li>
+            <li>赵六</li>
+        </ul>
+        <script type="text/javascript">
+            // 辅助函数
+            var log = function() {
+                console.log.apply(console,arguments);
+            }
+
+            // let list = document.querySelector('#user-list');
+            // let items = document.querySelectorAll ('#user-list > li');
+            //
+            // list.addEventListener('click', function(e){
+            //     // log('绑定成功')
+            //     if(e.target.tagName === 'LI') {
+            //         // 这里 LI 是大写
+            //         let item = e.target;
+            //         // 初始化 item 样式(还原)
+            //         items.forEach(function(item){
+            //             item.style.background = 'inherit';
+            //             item.style.color = 'inherit';
+            //         });
+            //         // 修改 item 样式
+            //         item.style.background = 'black';
+            //         item.style.color = 'white';
+            //
+            //         console.log(item.innerHTML);
+            //     }
+            // });
+
+            // 标准版本
+            let list = document.querySelector('#user-list');
+            let items = document.querySelectorAll ('#user-list > li');
+
+            list.addEventListener('click', function(e){
+                items.forEach(function(item){
+                    item.className = '';
+                });
+                if (e.target.tagName === 'LI') {
+                    let item = e.target;
+                    item.className = 'active';
+                    console.log(item.innerHTML);
+                }
+            });
+        </script>
+    </body>
+</html>

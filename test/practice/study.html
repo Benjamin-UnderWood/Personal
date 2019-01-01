@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+   <head>
+    <meta charset ="utf-8"/>
+    <title>Study plan</title>
+    <link rel="stylesheet" type="text/css" href="study.css">
+   </head>
+   <body>
+      <nav id="global-nav"><!--全局导航-->
+         <ul>
+             <li>
+               <a href="" >BOOK</a>
+             </li>
+             <li>
+               <a href="" >VIDEO</a>
+             </li>
+             <li>
+               <a href="" >PROJECT</a>
+             </li>
+             <li>
+               <a href="" >PHOTO</a>
+             </li>
+             <li>
+               <a href="" >MORE</a>
+             </li>
+         </ul>
+      </nav><!--全局导航-->
+      <div id="partOne"><!--第一部分，标题和搜索等开始-->
+         <div id='nav-primary'>
+            <div id="webname">
+               <a href="">大杂烩</a>
+            </div><!--大杂烩标题-->
+            <div id="search">
+               <form>
+                  <fieldset>
+                     <div id="good">
+                        <input tyep="search" id="inp-query" name="search_text" size="22"
+                          placeholder="搜索">
+                        <input type="submit">
+                      </div>
+                   </fieldset>
+               </form>
+            </div><!--搜索和提交按键-->
+         </div><!--第一部分第一个导航栏-->
+         <div id='nav-secondary'>
+            <ul>
+               <li>
+                  <a href="">看过</a>
+               </li>
+               <li>
+                  <a href="">未看过</a>
+               </li>
+            </ul>
+         </div><!--第一部分第二个导航栏-->
+      </div><!--第一部分结束-->
+      <div id="container"><!--第二部分，正文内容,包括文章和侧栏，开始-->
+         <div id="article" ><!--正文部分文章开始-->
+            <div id="screening" ><!--文章的第一块-->
+               <div class="screening-hd"><!--screening的第一部分-->
+                  <div class="slide-tip"><!--页码提示，放在文字前并往右浮动-->
+                     <span>1</span>/
+                     <span>7</span>
+                  </div>
+                  <div class="ui-slide-control"><!--翻页UI，放在文字前并往右浮动，需要用到JavaScript-->
+                     <span class="prev-bth">
+                        <a class="bth-prev" href="javascript:void(0)"></a>
+                     </span>
+                     <span class="next-bth">
+                        <a class="bth-next" href="javascript:void(0)"></a>
+                     </span>
+                  </div>
+                  <h2><!--文字放在浮动后面 自动会上去-->
+                     正在阅读
+                     <span>
+                        全部正在阅读
+                     </span>
+                     <span>
+                        即将阅读
+                     </span>
+                   </h2>
+               </div>
+               <div class="screening-bd"><!--screening的第二部分-->
+                  <ul>
+                     <li class="imgOne">pic1</li>
+                     <li class="imgOne">pic2</li>
+                     <li class="imgOne">pic3</li>
+                     <li class="imgOne">pic4</li>
+                     <li class="imgOne">pic5</li>
+                  </ul>
+               </div>
+            </div>
+            <div class="recent"><!--文章的第二块-->
+               <div class="recent-hd"><!--recent的标题部分-->
+                  <h2>
+                     正在阅读
+                     <span>
+                     全部正在阅读
+                     </span>
+                     <span>
+                     即将阅读
+                     </span>
+                   </h2>
+               </div>
+               <div class="recent-bd"><!--recent的图片部分-->
+                  <ul>
+                     <li class="imgTwo">pic1</li>
+                     <li class="imgTwo">pic2</li>
+                     <li class="imgTwo">pic3</li>
+                     <li class="imgTwo">pic4</li>
+                     <li class="imgTwo">pic5</li>
+                     <li class="imgTwo">pic1</li>
+                     <li class="imgTwo">pic2</li>
+                     <li class="imgTwo">pic3</li>
+                     <li class="imgTwo">pic4</li>
+                     <li class="imgTwo">pic5</li>
+                  </ul>
+               </div>
+            </div><!--文章的第二块 recent部分结束-->
+         </div><!--文章部分结束-->
+         <div id="aside" ><!--正文部分侧栏开始-->
+            侧边栏
+            <form>
+               <input type="date">
+            </form>
+          </div><!--正文部分侧栏结束-->
+      </div><!--正文结束-->
+      <div id="footer"><!--页脚部分开始-->
+         <div id="extraf"><!--往左浮动部分-->
+            <span class="fleft">
+               是不是很酷啊
+            </span>
+         <div id="flow"><!--往右浮动部分-->
+            <span class="fright">
+               <a href="">联系我们</a>·
+               <a href="">免责声明</a>·
+               <a href="">帮助中心</a>
+            </span>
+         </div>
+      </div>
+      <div><!--版权声明-->
+         <span>© 2005－2018 douban.com, all rights reserved </span>
+      </div>
+   </body>
+</html>

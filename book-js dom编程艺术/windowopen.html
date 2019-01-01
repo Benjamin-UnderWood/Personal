@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <a href="https://www.baidu.com/"  class ="popup">
+            百度一下</a>
+            <!-- onclick = 'return false' ,点击后不跳转了 -->
+        <script type="text/javascript">
+            // 辅助函数
+            var addLoadEvent = function(func) {
+                var oldonload = window.onload;
+                //将已有的保存，如果已有
+                if (typeof window.onload !== 'function' ) {
+                    window.onload = func;
+                } else {
+                    window.onload = function(){
+                        oldonload();
+                        func();
+                    }
+                }
+            }
+            addLoadEvent(prepareLinks);
+
+            // 主函数
+            function prepareLinks() {
+                // 此处表达成var prepareLinks = function(){ ， 则函数无效，到这就不运行了？？？
+                if(!document.getElementsByTagName) return false;
+                var links =document.getElementsByTagName('a');
+                for (var i = 0; i < links.length; i++) {
+                    if (links[i].getAttribute('class') == 'popup') {
+                        //包含了 对 'popup' 是否存在的判断
+                        links[i].onclick = function(){
+                            return popUp(this.getAttribute("href")) ? false : true;
+                            //return !popUp(this.getAttribute("href"));
+                        }
+                    }
+                }
+            }
+
+            // 点击链接 不跳转页面 ，弹出窗口
+            var popUp = function(winURL) {
+                window.open(winURL,"popup","resizable,scrollbars,status");
+                return true;
+            }
+
+            // 若 popUp 改成如下，则点击链接 在同一窗口下打开 新标签页面
+            // var popUp = function(winURL) {
+            //     window.open(winURL, '_blank');
+            //             return true;
+            // }
+        </script>
+    </body>
+</html>

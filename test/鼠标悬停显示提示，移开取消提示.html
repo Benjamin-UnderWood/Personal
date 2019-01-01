@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+            /* 相当于蒙版 */
+            .showoff{
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="#">Click</a>
+        <div class="showoff">
+            Message Box
+        </div>
+        <script type="text/javascript">
+            var button = document.querySelector('a');
+            button.addEventListener('mouseover',function(){
+                var Tip = document.querySelector('div');
+                Tip.classList.remove('showoff');
+            })
+            button.addEventListener('mouseout',function(){
+                var Tip = document.querySelector('div');
+                Tip.classList.add('showoff');
+            })
+        </script>
+    </body>
+</html>

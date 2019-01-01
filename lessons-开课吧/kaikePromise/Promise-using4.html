@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<title></title>
+<script src="jquery.js"></script>
+</head>
+<body>
+<script>
+// let p = $.ajax({url: 'data/arr.txt', dataType: 'json'});
+// // ajax有返回值，且返回值就是一个promise对象
+// console.log(p);
+
+// console.log($.ajax({url: 'data/json.txt', dataType: 'json'}));
+
+Promise.all([
+    $.ajax({url: 'data/arr.txt', dataType: 'json'}),
+    $.ajax({url: 'data/json.txt', dataType: 'json'})
+]).then(function(results){
+    let [arr, json] = results;
+    alert('成功了')
+    console.log(arr, json)
+}, function(){
+    alert('失败了')
+})
+</script>
+</body>
+</html>

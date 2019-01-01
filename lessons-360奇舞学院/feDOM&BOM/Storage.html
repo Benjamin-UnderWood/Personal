@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <h3>您访问了网页 <em>0</em> 次</h3>
+        <button id="removeStorage">清除</button>
+        <script type="text/javascript">
+        const storagekey = 'visitTImes';
+
+        function count() {
+            let times = (0 | localStorage.getItem(storagekey)) + 1;
+            let showTimes = document.querySelector('h3 > em');
+
+            showTimes.innerHTML = times;
+
+            localStorage.setItem(storagekey, times);
+            // 也可以表达成 localStorage.storagekey = times；
+            // 访问 localStorage.storagekey
+        }
+
+        removeStorage.onclick = function() {
+            localStorage.removeItem(storagekey);
+            count();
+        }
+
+        count();
+        </script>
+    </body>
+</html>

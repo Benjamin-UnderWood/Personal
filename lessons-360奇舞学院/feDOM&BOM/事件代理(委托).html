@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+        button {
+            font-size: 16px;
+        }
+
+        li {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        li.selected {
+            color: red;
+        }
+        </style>
+    </head>
+    <body>
+        <button>add</button>
+        <ul>
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+            <li>5</li>
+            <li>6</li>
+        </ul>
+        <script type="text/javascript">
+            const btn = document.querySelector('button');
+            const list = document.querySelector('ul');
+            const items = list.getElementsByTagName('li');
+
+            btn.addEventListener('click', evt=>{
+                let item = document.createElement('li');
+
+                item.innerHTML = `${items.length + 1}`;
+                list.appendChild(item);
+            });
+
+            // 每个el上添加 click 事件；问题：新加的 el 没有事件；若要注册，事件很多。
+            // Array.from(items).forEach(item => {
+            //     item.addEventListener('click', evt=>{
+            //         evt.target.className = evt.target.className ? '' : 'selected'
+            //     });
+            // });
+
+            // 注册在外层，只需判断触发的是否是内层的el；能注册在外层，一定注册在外层
+            list.addEventListener('click', evt=>{
+                let el = evt.target;
+                if(el.tagName === 'LI') {
+                    el.className = el.className ? '' : 'selected';
+                }
+            })
+        </script>
+    </body>
+</html>

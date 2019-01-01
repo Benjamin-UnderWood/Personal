@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+            #imgview img {
+                /* transform:scale(0.1); */
+                width: 96px;
+                height: 128px;
+            }
+            #imgview>a {
+                /* color: white;
+                float: left;
+                margin-right: 12px;
+                font-size: 16px; */
+                cursor: pointer;
+                text-decoration: none;
+            }
+            #fullview {
+                /* 背景mask */
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+           }
+
+            #fullview.hide {
+                display: none;
+            }
+
+            #fullview img {
+                /* 照片显示居中 mask中间 */
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        </style>
+    </head>
+    <body>
+        <div id="imgview">
+            <a href="yangyang.jpg">
+                <img src="yangyang.jpg" alt="">
+            </a>
+        </div>
+        <div id="fullview" class="hide">
+            <img src="yangyang.jpg" alt="">
+        </div>
+        <script type="text/javascript">
+            const imageView = document.getElementById('imgview');
+            const fullView = document.getElementById('fullview');
+
+            imageView.addEventListener('click', evt=>{
+                evt.preventDefault();
+                fullView.className = '';
+            })
+
+            fullView.addEventListener('click', evt=>{
+                evt.target.className = 'hide';
+            })
+        </script>
+    </body>
+</html>

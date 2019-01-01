@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+        body {
+            margin: 0px;
+        }
+        .slideImgs {
+            position: relative;
+            height: 450px;
+            width : 790px;
+        }
+        img {
+            width: 750px;
+            height: 450px;
+            padding:20px;
+        }
+            .showoff {
+                display: none;
+            }
+            .showon{
+                display: inline-block;
+            }
+            .nextButton {
+                position: absolute;
+                right: 20px;
+                top: 224px;
+                height: 42px;
+                background: transparent;
+                border:  0px;
+                width: 30px;
+                padding:0px;
+            }
+            .preButton {
+                position: absolute;
+                left: 20px;
+                top: 224px;
+                height: 42px;
+                background: transparent;
+                border:  0px;
+                width: 30px;
+                padding:0px;
+            }
+            button:focus{
+                outline: none;
+            }
+            span {
+                /* 用好百分数，继承自父节点的宽度和高度等信息 */
+                width:100%;
+                /* height: 100%; */
+                display: inline-block;
+                background-color: black;
+                /* height: 42px; */
+                padding: 13.5px 0px;
+                opacity: 0.2;
+                font-weight: bold;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="slideImgs">
+            <button type="button" name="button" class='preButton'><span> < </span></button>
+            <img src="images/sliderImagOne.jpg" alt="" class='showon showoff'/>
+            <img src="images/sliderImagTwo.jpg" alt="" class='showoff'/>
+            <img src="images/sliderImagThree.jpg" alt="" class='showoff'/>
+            <img src="images/sliderImagFour.jpg" alt="" class='showoff'/>
+            <button type="button" name="button" class='nextButton'><span> > </span></button>
+        </div>
+        <script type="text/javascript">
+        var currentindex = 0;
+        var nextPic = function(){
+            var slideImgs = document.querySelector('.slideImgs')
+            var images = slideImgs.querySelectorAll('img');
+            images[currentindex].classList.remove('showon');
+            currentindex = (currentindex + 1) % 4;
+            images[currentindex].classList.add('showon');
+        }
+        var nextButton = document.querySelector('.nextButton');
+        /* 这里调用的函数，而不是结果 */
+       nextButton.addEventListener('click',nextPic);
+
+        var prePic = function() {
+            var slideImgs = document.querySelector('.slideImgs')
+            var images = slideImgs.querySelectorAll('img');
+            images[currentindex].classList.remove('showon');
+            currentindex = (currentindex - 1 +4) % 4;
+            images[currentindex].classList.add('showon');
+        }
+        var preButton = document.querySelector ('.preButton');
+        preButton.addEventListener('click',prePic);
+        setInterval(nextPic,3000)
+        </script>
+    </body>
+</html>

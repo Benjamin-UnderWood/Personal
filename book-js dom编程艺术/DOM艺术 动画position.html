@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+            body{
+                margin: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <p id="message">
+            Wheel
+        </p>
+        <p id='message2'>
+            Whoal
+        </p>
+        <script type="text/javascript">
+            // 设置元素的 位置属性
+            function positionMessage() {
+                if(!document.getElementById) return false;
+                if(!document.getElementById('message')) return false;
+                var elem = document.getElementById('message');
+                elem.style.position = 'absolute';
+                elem.style.left = '50px';
+                elem.style.top = '100px';
+                // 直接调用
+                moveElement('message',125,25,20);
+                // clearTimeout(movement);
+                if(!document.getElementById('message2')) return false;
+                var elem = document.getElementById('message2');
+                elem.style.position = 'absolute';
+                elem.style.left = '50px';
+                elem.style.top = '50px';
+                // 主函数调用完毕后 ，间隔 1000 ms 再调用
+                movement = setTimeout("moveElement('message2',125,125,20)",1000)
+            }
+
+            // 改变元素的位置
+            function moveElement(elementID,final_x,final_y,interval) {
+                if(!document.getElementById) return false;
+                if(!document.getElementById(elementID)) return false;
+                var elem = document.getElementById(elementID);
+                var xpos = parseInt(elem.style.left);
+                var ypos = parseInt(elem.style.top);
+                if(xpos == final_x && ypos == final_y) {
+                    return true;
+                }
+                if (xpos < final_x) {
+                    xpos++;
+                }
+                if (xpos > final_x) {
+                    xpos--;
+                }
+                if (ypos < final_y) {
+                    ypos++;
+                }
+                if (ypos > final_y) {
+                    ypos--;
+                }
+                elem.style.left = xpos + 'px';
+                elem.style.top = ypos + 'px';
+                // 拼接字符串
+                // var repeat = "moveElement('"+elementID +"',"+final_x+","+final_y+","+interval+")";
+                // 全局变量 让 运动 在函数外的任何地方都能停止
+                // movement = setTimeout(repeat,interval);
+                // 上面四句 相当于 以下
+                movement = setTimeout(function(){
+                    moveElement(elementID,final_x,final_y,interval);
+                },interval);
+            }
+
+            function addLoadEvent(func) {
+                var oldonload = window.onload ;
+                if (typeof window.onload != 'function'){
+                    window.onload = func;
+                }else {
+                    window.onload = function() {
+                        oldonload();
+                        func();
+                    }
+                }
+            }
+            addLoadEvent(positionMessage);
+
+        </script>
+    </body>
+</html>

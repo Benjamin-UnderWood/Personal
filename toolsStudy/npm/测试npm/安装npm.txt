@@ -1,0 +1,1 @@
+npm install express -g   # 全局安装

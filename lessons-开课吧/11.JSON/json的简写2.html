@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <script>
+            // let json={
+            //     a: 12,
+            //     show: function (){ // 传统写法
+            //         alert(this.a)
+            //     }
+            // }
+
+            let json={
+                a: 12,
+                show(){    // ES6 简写
+                    alert(this.a)
+                }
+            } // 新版的ES6面向对象，class里的方法也这样表示
+
+            json.show()
+        </script>
+    </body>
+</html>

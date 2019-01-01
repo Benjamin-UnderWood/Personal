@@ -1,0 +1,63 @@
+<!-- 三个状态 用 红(stop)、 绿(pass)、 黄(wait)表示
+要求用 JavaScript 让三个状态轮流切换
+每个状态停留时间 2s -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+            #traffic > li {
+                display: block;
+            }
+
+            #traffic span{
+                display: inline-block;
+                width: 50px;
+                height: 50px;
+                background-color: gray;
+                margin: 5px;
+                /* 变成圆 */
+                border-radius: 50%;
+            }
+            /* 把状态(和事件)放在父节点上，方便控制 */
+            #traffic.stop li:nth-child(1) span{
+                background-color: #a00;
+            }
+            #traffic.wait li:nth-child(2) span{
+                background-color: #aa0;
+            }
+            #traffic.pass li:nth-child(3) span{
+                background-color: #0a0;
+            }
+        </style>
+    </head>
+    <body>
+        <ul id="traffic" class="wait">
+            <li><span></span></li>
+            <li><span></span></li>
+            <li><span></span></li>
+        </ul>
+        <script type="text/javascript">
+            // 版本三
+            const traffic = document.getElementById('traffic');
+
+            // 封装成 start 方法；stateList 是传入参数；stateList 容器，也是传入参数
+            // stateList、stateList将来可能会变化
+            function start(traffic, stateList){
+                // currentStateIndex 成了私有变量，没有暴露出来
+                // 这个变量是循环自己去控制的，调用者不用去关心
+                var currentStateIndex = 0;
+
+                setInterval(function(){
+                    var state = stateList[currentStateIndex];
+                    traffic.className = state;
+                    currentStateIndex = (currentStateIndex + 1) % stateList.length;
+                }, 2000);
+            }
+            // stateList 将来根据需求的改变，可能会改变(增加状态)，因此把它暴露出来
+            // 修改时，不影响上面的函数
+            stateList = ['wait', 'stop', 'pass'];
+        </script>
+    </body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style type="text/css">
+	*{
+		margin: 0;
+		padding: 0;
+
+	}
+
+	.box {
+		position: absolute;
+		width:15px;
+		height: 15px;
+		background: yellow;
+		border: 1px dashed black;
+		opacity: 0.5;
+	}
+
+	#box {
+		top:300px;
+		left:300px;
+	}
+	</style>
+</head>
+<body>
+<div id='box' class="box">
+</div>
+<script>
+	window.onload = function () {
+		const box = document.getElementById('box');
+
+		/**
+		 * @param  {object} el
+		 * @param  {object} obj
+		 * @param  {function} fn
+		 * @return
+		 */
+		let timer = null;
+		function startMove(el, obj, fn) {
+			clearInterval(timer);
+
+			timer = setInterval(function () {
+
+				for (let key in obj) {
+					if(obj.hasOwnProperty(key)) {
+						let curPos = 0;
+
+						if (key === 'opacity') {
+							curPos = Math.round(parseFloat(getStyle(el, key)) * 100);
+						} else {
+							curPos = parseInt(getStyle(el, key));
+						}
+
+						let speed = (obj[key] - curPos) / 6;
+						speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+
+						if(curPos !== obj[key]) {
+							if(key === 'opacity') {
+								el.style.filter = 'alpha(opacity:' + (curPos + speed) + ')';
+								el.style.opacity = (curPos + speed) / 100;
+							} else {
+								el.style[key] = curPos + speed + 'px';
+							}
+						} else {
+							clearInterval(timer);
+							if(fn) fn();
+						}
+					}
+
+				}
+
+			}, 50);
+
+		}
+
+		function getStyle (el, attr) {
+			if (el.currentStyle) {
+				return el.currentStyle[attr];
+			} else {
+				return getComputedStyle(el,false)[attr];
+			}
+		}
+
+		setInterval(function () {
+			startMove(box, { left: 500 }, function () {
+				startMove(box, { left: 300 });
+			});
+		}, 2405)
+	}
+</script>
+</body>
+</html>

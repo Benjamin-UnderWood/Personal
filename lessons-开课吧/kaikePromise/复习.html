@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <script src="jquery.js"></script>
+    <script>
+        Promise.all([
+            $.ajax({url: 'data/arr.txt', dataType: 'json'}),
+            $.ajax({url: 'data/json.txt', dataType: 'json'}),
+            $.ajax({url: 'data/num.txt', dataType: 'json'}),
+        ]).then(results=>{
+            let [arr, json, num] = results;
+            alert('success');
+            console.log(arr, json, num);
+        }, err=>{
+            alert('failed');
+        })
+    </script>
+    <body>
+
+    </body>
+</html>

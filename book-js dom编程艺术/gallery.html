@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Image Gallery</title>
+        <link rel="stylesheet" href="css/showPic.css">
+    </head>
+    <body>
+        <h1>Snapshots</h1>
+        <ul id = "imagegallery">
+            <li>
+                <a href="images/church.jpg"  onclick = "showPic(this);return false;"
+                title="church"><img src="images/thumbnail_church.jpg"></a>
+            </li>
+            <!--<a href="images/church.jpg"  onmouseover = "showPic(this);"
+            title="church">Church</a>  -->
+            <!--鼠标指针悬停在某元素上，这里是 链接 上 ，就触发 函数 -->
+            <li>
+                <a href="images/hanging_basket.jpg"   onclick = "showPic(this);
+                return false;"  title="hanging_basket">
+                <img src="images/thumbnail_hanging_basket.jpg"></a>
+            </li>
+            <li>
+                <a href="images/kindergarten.png"   onclick = "showPic(this);
+                return false;"  title="kindergarten">
+                <img src="images/thumbnail_kindergarten.jpg" alt="kindergarten"/></a>
+            </li>
+            <li>
+                <a href="images/school.png"   onclick = "showPic(this);
+                return false;"  title="school"><img src="images/thumbnail_school.jpg"></a>
+            </li>
+        </ul>
+        <!--<p><a href="javascript:popUp('https://www.baidu.com/');" >百度一下</a></p>-->
+        <script type="text/javascript" src="scripts/showPic.js">
+        </script>
+    </body>
+</html>

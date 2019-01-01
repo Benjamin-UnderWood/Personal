@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <script>
+            function *show() {
+                alert('a');
+
+                yield 12;
+
+                alert('b');
+
+                return 5;
+            }
+
+            let gen = show();
+
+            // gen.next();
+            // gen.next();
+
+            let res1 = gen.next();
+            console.log(res1);  // {value: 12, done: false}; JSON 阶段性成果 12
+            let res2 = gen.next();
+            console.log(res2);  // {value: undefined, done: true}
+            // 最后一步的结果没东西了(菜做完了，最后返回，需要用函数的return 真成果)
+        </script>
+    </body>
+</html>

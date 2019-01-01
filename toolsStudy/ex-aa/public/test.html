@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>二维码动态更新</title>
+        <!-- <script src="jquery.js"></script> -->
+        <script src="qrcode.js"></script>
+    </head>
+    <body>
+        <h3>二维码动态更新验证</h3>
+        <a herf='###'>
+            <div id='placeHolder'></div>
+        </a>
+        <script>
+            // 轮询方式
+            var placeHolder = document.getElementById('placeHolder');
+            // 生成二维码
+            function QRCode(el, url) {
+                var typeNumber = 4;
+                var errorCorrectionLevel = 'L';
+                var qr = qrcode(typeNumber, errorCorrectionLevel);
+                qr.addData(url);
+                qr.make();
+                el.innerHTML = qr.createImgTag();
+            }
+            
+            // new QRCode(placeHolder, 'hi');
+            function poll(){
+                const xhr = new XMLHttpRequest();
+                method = 'GET',
+                url = 'http://localhost:3000/qrcode'
+            
+                xhr.open(method, url, true);
+            
+                xhr.onreadystatechange = function() {
+                    if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200){
+                        console.log(xhr.responseText);
+                        let data = JSON.parse(xhr.responseText);
+                        let url = `http://localhost:3000/check/${data.code}`;
+                        qrcode.innerHTML = '';
+                        new QRCode(placeHolder, url);
+                        placeHolder.parentNode.href = url; // a 链接的地址
+                    }
+                };
+            xhr.send();
+            }
+
+            // setInterval 1s中去服务器拿一次当前的code
+            // 通过异步方式去跟服务器同步信息；浪费，每秒发送请求拿回来的code大部分跟之前的都一样
+            // 请求白发了，白白地占用带宽
+            // 但是如果把时间间隔变长了也不行，因为前一个二维码两秒中就过期了
+            // 每三秒中发一次的话，很可能当前的二维码已经过期了，我还要再过一段时间才发送请求，那用户扫二维码就进不去了
+            // 服务器压力还好的时候，用轮询是最简单的双向通讯的方式
+            setInterval(poll, 1000);
+            // poll();
+        </script>
+    </body>
+</html>

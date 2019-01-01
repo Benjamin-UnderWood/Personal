@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>二维码动态更新</title>
+        <!-- <script src="jquery.js"></script> -->
+        <script src="qrcode.js"></script>
+    </head>
+    <body>
+        <h3>二维码动态更新验证</h3>
+        <a herf='###'>
+            <div id='placeHolder'></div>
+        </a>
+        <script>
+            // 轮询方式
+            var placeHolder = document.getElementById('placeHolder');
+            // 生成二维码
+            function QRCode(el, url) {
+                var typeNumber = 4;
+                var errorCorrectionLevel = 'L';
+                var qr = qrcode(typeNumber, errorCorrectionLevel);
+                qr.addData(url);
+                qr.make();
+                el.innerHTML = qr.createImgTag();
+            }
+            
+            // new QRCode(placeHolder, 'hi');
+            function long_poll(){
+                const xhr = new XMLHttpRequest();
+                method = 'GET',
+                url = 'http://localhost:3000/qrcode/${code}' // 长轮询 改动
+            
+                xhr.open(method, url, true);
+            
+                xhr.onreadystatechange = function() {
+                    if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200){
+                        console.log(xhr.responseText);
+                        let data = JSON.parse(xhr.responseText);
+                        let url = `http://localhost:3000/check/${data.code}`;
+                        qrcode.innerHTML = '';
+                        new QRCode(placeHolder, url);
+                        placeHolder.parentNode.href = url; // a 链接的地址
+                    }
+                };
+            xhr.send();
+            }
+            
+            // 第一次请求客户端与服务器的肯定是不一致的，所以会立即返回当前的二维码
+            // 接下来下一个请求，如果code没有刷新没有变化的话，这时候服务器就会await在那里
+            // 等到二维码刷新的时候，把code返回，然后返回完之后再发起下一个请求
+            // 然后客户端与服务器又一致，然后又挂起；以此循环
+            // 除了第一次以外，每次只有在二维码发生变化的时候，才会把之前的那个请求给结束掉
+            // 同时发起下一个请求，这样的话就不会每秒都发起请求了，这就是长轮询的方式
+        
+            long_poll(0)
+        </script>
+    </body>
+</html>

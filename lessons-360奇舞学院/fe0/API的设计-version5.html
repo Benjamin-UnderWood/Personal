@@ -1,0 +1,68 @@
+<!-- 三个状态 用 红(stop)、 绿(pass)、 黄(wait)表示
+要求用 JavaScript 让三个状态轮流切换
+每个状态停留时间 2s -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+            #traffic > li {
+                display: block;
+            }
+
+            #traffic span{
+                display: inline-block;
+                width: 50px;
+                height: 50px;
+                background-color: gray;
+                margin: 5px;
+                /* 变成圆 */
+                border-radius: 50%;
+            }
+            /* 把状态(和事件)放在父节点上，方便控制 */
+            #traffic.stop li:nth-child(1) span{
+                background-color: #a00;
+            }
+            #traffic.wait li:nth-child(2) span{
+                background-color: #aa0;
+            }
+            #traffic.pass li:nth-child(3) span{
+                background-color: #0a0;
+            }
+        </style>
+    </head>
+    <body>
+        <ul id="traffic" class="wait">
+            <li><span></span></li>
+            <li><span></span></li>
+            <li><span></span></li>
+        </ul>
+        <script type="text/javascript">
+            // 版本五
+            const traffic = document.getElementById('traffic');
+
+            function wait(time){
+                return new Promise(resolve => setTimeout(resolve, time));
+            }
+
+            function setState(state){
+                traffic.className = state;
+            }
+
+            function reset(){
+                //
+                Promise.resolve()
+                    .then(setState.bind(null, 'wait'))
+                    .then(wait.bind(null, 1000))
+                    .then(setState.bind(null, 'stop'))
+                    .then(wait.bind(null, 2000))
+                    .then(setState.bind(null, 'pass'))
+                    .then(wait.bind(null, 3000))
+                    .then(reset);
+            }
+
+            reset();
+        </script>
+    </body>
+</html>

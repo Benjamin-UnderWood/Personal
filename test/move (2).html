@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>任意属性值</title>
+	<style type="text/css">
+		*{
+			margin: 0 auto;
+			padding: 0;
+
+		}
+
+		#box {
+			top:300px;
+			left:600px;
+			position: absolute;
+			list-style: none;
+			width:15px;
+			height: 15px;
+			background-color: yellow;
+			opacity:0.3;
+			border: 1px dashed black;
+		}
+	</style>
+
+</head>
+<body>
+<div id='box'>
+</div>
+<script type="text/javascript">
+	window.onload = function () {
+		var time1 = new Date();
+		console.log(time1.getTime());
+		const box = document.getElementById('box');
+		var timer = null;
+		// setInterval(function () {
+		// 	startMove(box, 'height', 60, function () {
+		// 		startMove(box, 'height', 15, function () {
+		// 			startMove(box, 'width', 60, function () {
+		// 				startMove(box, 'width', 15);
+		// 			});
+		// 		});
+		// 	})
+		// }, 1770);
+
+		// box.onmouseover = function () {
+		// 	startMove(box, 'height', 25, function () {
+		// 		startMove(box, 'height', 30);
+		// 	})
+		// };
+		// 将这里的this 换成指定的box_1就可以实现链式效果。不知道为什么this不行。
+
+		// box.onmouseleave = function () {
+		// 	startMove(box, 'height', 40);
+		// };
+		function getStyle (obj,attr) {
+			if (obj.currentStyle) {
+				return obj.currentStyle[attr];
+			} else {
+				return getComputedStyle(obj,false)[attr];
+			}
+		}
+
+		function startMove(obj, attr, tar, fn) {
+			clearInterval(timer);
+
+			timer = setInterval(function () {
+				var icurr = 0;
+				if (attr ==='opacity') {
+					icurr = Math.round( parseFloat(getStyle(obj,attr))*100 );
+				} else {
+					// icurr = parseInt( getStyle(obj,attr) ); // 15 读取长度信息时是小数有问题, 50.9一直被读转化成50, 然后加1又被读成50, 死循环
+					// console.log(getStyle(obj,attr), icurr);
+					icurr = Math.ceil(parseFloat( getStyle(obj,attr) )); // 15
+					console.log(getStyle(obj,attr), icurr);
+				}
+
+				var incre = (tar - icurr) / 10; // 1
+				incre = incre > 0 ? Math.ceil(incre) : Math.floor(incre);
+				console.log(incre);
+				if (icurr === tar) {
+					clearInterval(timer);
+					if(fn) fn();
+
+					var time2 = new Date();
+					console.log(time2.getTime() - time1.getTime());
+				} else {
+					if (attr === 'opacity') {
+						obj.style[attr] = (icurr + incre) / 100;
+					} else {
+						// alert(`icurr: ${icurr}`);
+						// console.log(icurr, incre);
+						obj.style[attr] = icurr + incre + 'px'; // 15 + 1
+						// console.log(obj.style[attr]);
+					}
+				}
+
+			}, 20)
+
+		}
+
+		setInterval(function () {
+			startMove(box, 'width', 100, function () {
+				console.log('1');
+				startMove(box, 'height', 100, function () {
+					console.log('2');
+					startMove(box, 'width', 15, function () {
+						console.log('3');
+						startMove(box, 'height', 15);
+					});
+				});
+			});
+		}, 2570);
+	}
+</script>
+</body>
+</html>

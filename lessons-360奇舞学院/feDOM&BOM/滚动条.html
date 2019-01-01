@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style media="screen">
+        #scrollView {
+            height: 150px;
+            overflow: scroll;
+        }
+        </style>
+    </head>
+    <body>
+        <div id="scrollView">
+            <ul>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+                <li>content</li>
+            </ul>
+        </div>
+        <div id="messageView"></div>
+        <script type="text/javascript">
+            const scrollView = document.getElementById('scrollView');
+            const messageView = document.getElementById('messageView');
+
+            function output(msg) {
+                messageView.innerHTML += `<div>scrollTop: ${msg}</div>`
+            }
+
+            scrollView.addEventListener('scroll', evt=>{
+                // console.log(evt.target)
+                output(evt.target.scrollTop);
+                // scrollTop 返回元素的滚动条位置；这里即<div id="scrollView">的滚动条位置
+            })
+        </script>
+    </body>
+</html>

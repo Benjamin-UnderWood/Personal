@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>front end 3</title>
+        <link rel="stylesheet" href="fe3.css">
+        <style>
+            /*  标签选择器*/
+            h1{
+                background: lightblue;
+                color:green;
+            }
+            /*  id选择器*/
+            #id-h1{
+                background: yellow;
+            }
+            /*  class选择器*/
+            .gua-title{
+                background: lightblue;
+            }
+        </style>
+    </head>
+    <body>
+        <!--inline attribute内联属性来写css,非常不推荐，难以维护,分散在各处-->
+        <div>
+            <h1 style="color:red;">hello gua</h1>
+            <h1 id="id-h1">E=MC<span class="square">2</span></h1>
+            <h1 class="gua-title">hello class</h1>
+        </div>
+    </body>
+</html>
