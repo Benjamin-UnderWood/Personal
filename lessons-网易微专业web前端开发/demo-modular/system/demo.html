@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+</head>
+<style>
+    #caculator{
+        text-align: center;
+        margin-top: 100px;
+    }
+    input, button, span{
+        padding: 8px;
+    }
+</style>
+<body>
+
+<div id="caculator">
+    <h2>Caculator</h2>
+    <input type="text" class="j-left">
+    <button class="j-add">+</button>
+    <input type="text" class="j-right">
+    =
+    <span class="j-result"></span>
+</div>
+
+<script src="system.js"></script>
+<script>
+System.path = {
+    // System.path 是一个运行文件，它的意思是我们把 app/* 的文件都映射到 上级文件夹的es6文件夹的js
+    'app/*':"../es6/*'.js"
+}
+
+System.import('app/caculator').then(function(c) {
+    // System.import与System.path都是ES6模块标准的js部分的标准
+    // 返回了一个 promise 对象，当这个模块加载完毕以后，我们会在这个回调函数里面传入这个模块(且我们把这个模块命名为c)
+    new c.Caculator(document.getElementById('caculator'))
+});
+</script>
+
+</body>
+</html>
