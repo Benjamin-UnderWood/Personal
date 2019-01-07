@@ -457,6 +457,7 @@ String.prototype.stripHTML = function () {
 var sTest = '<b>This would be bold</b>';
 console.log(sTest.stripHTML());
 
+
 // ^是正则表达式匹配字符串开始位置, 可以看到在以^开始的正则, 只从左边第一个字符匹配
 // 如果没匹配到, 那整个匹配就是失败的
 var sToMatch19 = 'http://blog.seetiny.com';
