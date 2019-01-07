@@ -335,13 +335,6 @@ var reExtraSpace = /^\s*\+(.*?)\s+$/;
 
 // 定义自己的trim()方法
 
-// $1,$2...是表示的小括号里的内容
-// $1是第一个小括号里的 ,$2是第2个小括号里的
-// 比如 /gai([\w]+?)over([\d]+)/
-// 匹配 gainover123
-// $1= 括号里的 n
-// $2= 第2个括号里的 123
-
 String.prototype.trim = function() {
 	var reExtraSpace = /^\s+(.*?)\s+$/;
 	return this.replace(reExtraSpace, '$1');
@@ -349,6 +342,120 @@ String.prototype.trim = function() {
 var sTest = '  this is a test  ';
 console.log(`[${sTest.trim()}]`); // [this is a test]
 // 用[]给字符串穿衣服, 能轻易看出是否修剪掉了空白
+
+// 3.2 反向引用
+// 存储在分组中的特殊值, 我们称之为 反向引用
+var sToMatch = '#123456789';
+var reNumbers = /#(\d+)/;
+reNumbers.test(sToMatch);
+console.log(RegExp.$1); // 123456789
+//
+
+// 可以直接在定义分组表达式中包含反向引用, 这可以通过使用特殊转义序列\1、\2等等实现
+var sToMatch = 'dogdog';
+var reDogDog = /(dog)\1/;
+console.log(reDogDog.test(sToMatch)); // 'true'
+// 正则表达式首先创建dog的组, 然后又被特殊转义序列\1引用, 使得这个正则表达式等同于/dogdog/
+
+// 反向引用可以用在String对象的replace()方法中, 这通过使用特殊字符序列$1、$2等等
+// 来实现
+// ex 调换字符串中的两个单词的顺序 '1234 5678' >>> '5678 1234'
+var sToChange = '1234 5678';
+var re = /(\d{4})(\d{4})/;
+var sNew = sToChange.replace(re, '$2 $1');
+console.log(sNew);
+// 此例中, 正则表达式有两个分组, 每一个分组有四个数字, 在replace()方法的第二个
+// 参数中, $2等同于'5678', 而$1等同于'1234', 对应于它们在正则表达式中出现的顺序
+
+// $1,$2...是表示的小括号里的内容
+// $1是第一个小括号里的 ,$2是第2个小括号里的
+// 比如 /gai([\w]+?)over([\d]+)/
+// 匹配 gainover123
+// $1= 括号里的 n
+// $2= 第2个括号里的 123
+
+// 3.3 候选
+// 要对同一个表达式同时匹配'red'和'black'? 这些单词完全没有相同的字符, 这样就要
+// 写两个不同的表达式, 分别对两个字符串进行匹配
+var sToMatch1 = 'red';
+var sToMatch2 = 'black';
+var reRed = /red/;
+var reBlack = /black/;
+console.log(reRed.test(sToMatch1) || reBlack.test(sToMatch1)); // true
+console.log(reRed.test(sToMatch2) || reBlack.test(sToMatch2)); // true
+
+// 虽然完成任务, 但是十分冗长;
+// 使用另一种方式, 正则表达式的候选操作符
+
+// 候选操作符和ESMAScript的二进制异或一样, 是一个管道符(|), 它放在两个单独的模式之间
+var sToMatch1 = 'red';
+var sToMatch2 = 'black';
+var reRedOrBlack = /(red|black)/;
+console.log(reRedOrBlack.test(sToMatch1)); // true
+console.log(reRedOrBlack.test(sToMatch2)); // true
+// 两个备选项放在一个分组中, 不管哪个被匹配了, 都会存在RegExp $1 中以备将来使用
+// (同时也可以在表达式中使用\1). 在第一个测试中, RegExp.$1 等于'red', 在第二个中
+// 等于'blue'
+
+var sToMatch1 = 'red';
+var sToMatch2 = 'black';
+var sToMatch3 = 'green';
+var reRedOrBlack = /(red|black|green)/;
+console.log(reRedOrBlack.test(sToMatch1));
+console.log(reRedOrBlack.test(sToMatch2));
+console.log(reRedOrBlack.test(sToMatch3));
+
+// OR模式在事件中一种通常的用法是从用户输入删除不合适的单词, 这对于在线论坛来说非常重要
+// 通过针对这些敏感单词使用OR模式和replace()方法, 则很方便地在帖子发布之前去掉敏感内容
+var reBadWords = /badword|anotherbadword/gi;
+var sUerInput = 'This is a string using badword1 and badword2';
+var sFinalText = sUerInput.replace(reBadWords, '****');
+console.log(sFinalText);
+// This is a string using ****1 and ****2
+
+var reBadWords = /badword|anotherbadword/gi;
+var sUerInput = 'This is a string using badword1 and badword2';
+var sFinalText = sUerInput.replace(reBadWords, function (sMatch) {
+	return sMatch.replace(/./g, '*'); // 任意字符(除去换行和回车之外)
+});
+console.log(sFinalText);
+// This is a string using *******1 and *******2
+
+// 3.4 非捕获性分组
+// 创建反向引用的分组, 称之为 捕获性分组;
+// 同时还有一种非捕获性分组, 它不会创建反向分组
+// 在较长的正则表达式中, 存储反向引用会降低匹配速度, 通过使用非捕获性分组, 仍然
+// 可以拥有与匹配字符串序列同样的能力, 而无需存储结果的开销
+// 如果要创建一个非捕获性分组, 只要在左括号的后面加上一个问号和一个紧跟的冒号
+var sToMatch = '#123456789';
+var reNum = /#(?:\d+)/;
+reNum.test(sToMatch); // true
+console.log(RegExp.$1); // ''; 没有捕获到
+// 这个例子的最后一行代码输出一个空字符串, 因为该分组是非捕获性的
+// 因为如此, replace() 方法就不能通过RegExp.$x变量来使用任何反向引用,
+// 或在正则表达式中使用它
+
+// test
+var sToMatch = '#123456789';
+var reNumbers = /#(?:\d+)/;
+console.log(sToMatch.replace(reNumbers, 'abcd$1'));
+// 这段代码输出'abcd$1' 而不是 'abcd123456789'
+// 因为'$1'在这里并不被看成一个反向引用, 而直接翻译成字符
+
+// 正则表达式常用的方式——去掉文本中所有的HTML标签, 尤其是在论坛和BBS上,
+// 这可以防止游客在他们的发帖中插入恶意或无意错误的HTML
+var reTag = /<(?:.|\s)>/;
+// 这里使用非捕获性分组是因为在小于号和大于号之间出现的内容并不重要(这些都是要被删除的)
+
+// 可以使用这个模式给String对象创建自己的 stripeHTML() 方法
+String.prototype.stripHTML = function () {
+	var reTag = /<(?:.|\s)*?>/g;
+	return this.replace(reTag, '');
+};
+
+// 使用
+var sTest = '<b>This would be bold</b>';
+console.log(sTest.stripHTML());
 
 // ^是正则表达式匹配字符串开始位置, 可以看到在以^开始的正则, 只从左边第一个字符匹配
 // 如果没匹配到, 那整个匹配就是失败的
