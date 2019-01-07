@@ -1,0 +1,19 @@
+<body onload="handleLoad()">
+<input type="button" value="Click Me" onclick="handleClick()">
+<script>
+function handleLoad() {
+	window.openMySpecialWindow(); // Uncaught TypeError: window.openMySpecialWindow is not a function
+	console.log('Loaded'); // 不会被执行
+}
+
+function handleClick() {
+	console.log('Clicked');
+}
+
+console.log('hello'); // hello
+</script>
+</body>
+<!-- 这个页面载入时, 尝试调用handleLoad()函数, 当尝试调用window对象的一个不存在的方法时, 就发生一个异常
+然后该线程退出, 所以console.log('Loaded')不会被执行;
+然后用户点击按钮时, 还可以调用handleClick() 函数, 并打印出内容
+-->

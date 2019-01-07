@@ -1,0 +1,13 @@
+<body onload="handleLoad()">
+	<p>The image below attempts to load a file that doesn't exist</p>
+	<img/>
+	<script>
+		function handleLoad() {
+			document.images[0].onerror = function() {
+				console.log('An error occured loading the image');
+			};
+
+			document.images[0].src = 'blue.gif';
+		}
+	</script>
+</body>

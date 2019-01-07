@@ -1,0 +1,11 @@
+<body onload="nonExistentFunction()">
+<script>
+	window.onerror = function (sMessage, sUrl, sLine) {
+		console.log('An error occurred:\n' + sMessage + '\nURL: ' + sUrl +
+		'\nLine Number: ' + sLine);
+		return true;
+	};
+
+	// console.log('Syntax error';
+</script>
+</body>

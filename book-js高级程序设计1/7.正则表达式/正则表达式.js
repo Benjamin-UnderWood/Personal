@@ -457,6 +457,31 @@ String.prototype.stripHTML = function () {
 var sTest = '<b>This would be bold</b>';
 console.log(sTest.stripHTML());
 
+// 3.5 前瞻
+// 希望当某个特定的字符分组出现在另一个字符串之前时, 才去捕获它, 这时需要使用前瞻
+// 前瞻(lookahead)告诉正则表达式运算器向前看一些字符而不移动其位置;
+// 同样存在正向前瞻和负向前瞻, 正向前瞻检查的是接下来出现的是不是某个特定字符集,
+// 而负向前瞻则是检查接下来的不应该出现的特定字符集
+// 创建正向前瞻要将模式放在(?= 和 ) 之间. 注意这不是分组, 虽然它也用到括号
+// 事实上, 分组不会考虑前瞻的存在
+var sToMatch1 = 'bedroom';
+var sToMatch2 = 'bedding';
+var reBed = /(bed(?=room))/;
+console.log(reBed.test(sToMatch1)); // true
+console.log(reBed.test(sToMatch2)); // false
+console.log(RegExp.$1); // 'bed'
+// reBed只匹配后面跟着'room'的'bed', 因此它能匹配sToMatch而不能匹配sToMatch2
+// 用表达式测试sToMatch1后, 这段代码输出RegExp.$1的内容是'bed'
+// 而不是'bedroom'. 模式的'room'的部分是包含在前瞻中的, 所以没有作为分组的一部分返回
+
+// 负向前瞻 将模式放在(?! 和 )之间, 匹配 bedding 而不是 bedroom
+var sToMatch1 = 'bedroom';
+var sToMatch2 = 'bedding';
+var reBed = /(bed(?!room))/;
+console.log(reBed.test(sToMatch1)); // false
+console.log(reBed.test(sToMatch2)); // true
+console.log(RegExp.$1); // 'bed'
+// 这里, 表达式变成只匹配后面不跟着'room'的'bed', 所以模式匹配'bedding'而不是'bedroom'
 
 // ^是正则表达式匹配字符串开始位置, 可以看到在以^开始的正则, 只从左边第一个字符匹配
 // 如果没匹配到, 那整个匹配就是失败的

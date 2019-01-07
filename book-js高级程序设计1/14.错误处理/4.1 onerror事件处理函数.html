@@ -1,0 +1,10 @@
+<body onload="nonExistentFunction()">
+<script>
+	window.onerror = function (sMessage, sUrl, sLine) {
+		console.log('An error occurred:\n' + sMessage + '\nURL: ' + sUrl +
+		'\nLine Number: ' + sLine);
+		return true; // 防止浏览器信息也显露出来
+		// 要从浏览器中隐藏它的报错, onerror 事件处理函数需要返回true
+	}
+</script>
+</body>
