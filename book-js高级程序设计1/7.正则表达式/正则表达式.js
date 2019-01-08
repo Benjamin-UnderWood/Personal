@@ -483,6 +483,66 @@ console.log(reBed.test(sToMatch2)); // true
 console.log(RegExp.$1); // 'bed'
 // 这里, 表达式变成只匹配后面不跟着'room'的'bed', 所以模式匹配'bedding'而不是'bedroom'
 
+// 3.6 边界
+// ^     行开头
+// $     行结尾
+// \b    单词的边界
+// \B    非单词的边界
+// 假设想查找一个单词, 但它只出现在行尾, 可以使用$来表示它
+// \ 这是引用符，用来将这里列出的这些元字符当作普通的字符来进行匹配。
+// 例如正则表达式\$被用来匹配美元符号，而不是行尾，类似的，正则表达式\.用来匹配点字符，而不是任何字符的通配符
+var sToMatch = 'Important word is tha last one.';
+var reLastWord = /(\w+)\.$/; // 一个至少一个字符的单词并且以.结尾
+reLastWord.test(sToMatch);
+console.log(RegExp.$1); // one
+// 在一行结束之前出现的跟着句号的一个或多个单词字符
+
+// 还可以容易获取到一行的第一个单词, 使用脱字符号(^)
+var sToMatch = 'Important word is tha last one.';
+var reFirstWord = /^(\w+)/; // 一个至少一个字符的单词并且以.结尾
+reFirstWord.test(sToMatch);
+console.log(RegExp.$1); // Important
+
+// 这个例子也可以用单词边界实现
+var sToMatch = 'Important word is tha last one.';
+var reFirstWord = /^(.+?)\b/;
+reFirstWord.test(sToMatch);
+console.log(RegExp.$1); // Important
+// 正则表达式用惰性量词来制定在单词边界之前就可以出现任何字符, 并且可以出现一次货多次(字符),
+// 如果使用贪婪量词, 表达式就匹配整个字符串(因为可以包含空白)
+
+// 使用单词边界可以方便地从字符串中抽取单词
+var sToMatch = 'First second third fourth fifth sixth';
+var reWords = /\b(\S+?)\b/g;
+var arrWords = sToMatch.match(reWords); // ["First", "second", "third", "fourth", "fifth", "sixth"]
+// 注意行的开始和行的结束, 通常由^和$表示位置, 对应地也认为是单词的边界, 所以'First' 'sixth'也在结果中
+
+// 这并非唯一的获取句子中所有单词的方法
+// 更加简单的方法是使用单词字符类(\w)
+var sToMatch = 'First second third fourth fifth sixth';
+var reWords = /(\w+)/g;
+var arrWords = sToMatch.match(reWords); // ["First", "second", "third", "fourth", "fifth", "sixth"]
+
+// 3.7 多行模式
+// 行边界的开始和结束的匹配
+// 单行模式显而易见, 多行呢? 可以使用split()方法将字符串分割成行与行的数组, 但就是得对每一行单独进行正则表达式测试
+var sToMatch = 'First second\nthird fourth\nfifth sixth';
+var reLastWordOnLine = /(\w+)$/g;
+var arrWords = sToMatch.match(reLastWordOnLine); // sixth
+// 唯一包含的匹配是 'sixth', 因为只有它在字符串的结尾处,然而 有两个换行符, 'second' 与 'fourth'
+// 也应该返回; 这就是引入多行模式的原因
+
+// 要指定多行模式, 只要在正则表达式后面添加一个m选项, 这会让$边界匹配换行符(\n)以及字符串真正的结尾
+var sToMatch = 'First second\nthird fourth\nfifth sixth';
+var reLastWordOnLine = /(\w+)$/gm;
+var arrWords = sToMatch.match(reLastWordOnLine); // ["second", "fourth", "sixth"]
+
+// 多行模式同样也会改变^边界的行为, 这时他会匹配换行符之后的位置(以及字符串真正的开头)
+var sToMatch = 'First second\nthird fourth\nfifth sixth';
+var reFirstWordOnLine = /^(\w+)/gm;
+var arrWords = sToMatch.match(reFirstWordOnLine); // ["First", "third", "fifth"]
+
+
 // ^是正则表达式匹配字符串开始位置, 可以看到在以^开始的正则, 只从左边第一个字符匹配
 // 如果没匹配到, 那整个匹配就是失败的
 var sToMatch19 = 'http://blog.seetiny.com';
@@ -522,6 +582,7 @@ var re24 = /^http:\/\/blog.seetiny.com$/;
 var arrMatches24 = sToMatch24.match(re24);
 console.log(arrMatches24); // [ 'http://blog.seetiny.com', index: 0, input: 'http://blog.seetiny.com' ]
 console.log(sToMatch24.replace(re24, 'jimmy')); // jimmy
+
 // ^和$用处非常多，常见的就是使用sublime编辑给每行文本开始和技术加引号，括号逗号什么的，非常方便
 // 例如有一堆字符串要写SQL插入到数据库
 // 85353001071
@@ -544,6 +605,112 @@ console.log(sToMatch24.replace(re24, 'jimmy')); // jimmy
 // 	"81106514054",
 // 	"81106514054")
 
+// 7.4 理解RegExp对象
+// js中每个正则表达式都是一个对象, 同其他的对象一样
+// RegExp实例和构造函数都有属性, 两者的属性在创建模式和进行测试时都会发生改变
+// 7.4.1
+// global——Boolean值, 表示g(全局选项)是否已经设置
+// ignoreCase——Boolean值, 表示i(忽略大小写选项)是否已经设置
+// lastIndex——整数, 代表下次匹配将会从哪个字符位置开始(只有当使用exec()或test()函数才会填入,否则为0)
+// multiline——Boolean值, 表示m(多行模式选项)是否已经设置
+// source——正则表达式的源字符串形式, ex/[ba]*/的source将返回"[ba]*"
+
+// 一般不会使用global、ignoreCase、multiline和source属性,因为一般之前就已经知道了这些数据
+var reTest = /[ba]*/i;
+console.log(reTest.global); // false
+console.log(reTest.ignoreCase); // true
+console.log(reTest.multiline); // false
+console.log(reTest.source); // [ba]*
+
+// 真正有用的属性是lastIndex, 它可以告诉你正则表达式在某个字符串中停止之前, 查找了多远
+var sToMatch = 'bbq is short for barbecue';
+var reB = /b/g;
+reB.exec(sToMatch);
+console.log(reB.lastIndex); // 1
+reB.exec(sToMatch);
+console.log(reB.lastIndex); // 2
+reB.exec(sToMatch);
+console.log(reB.lastIndex); // 18
+reB.exec(sToMatch);
+console.log(reB.lastIndex); // 21
+// reB查找的是, 当它首次检测sToMatch时, 它发现在第一个位置——也就是位置0, 是b; 因此, lastIndex属性被
+// 设置成1, 再次调用exec() 时就从这个地方开始执行; 再次调用exec(), 表达式在位置1又发现了b, 于是将
+// lastIndex设置为2, 第三次调用, 发现b在位置17, 于是又将lastIndex设置为18, 如此继续
+
+// 如果想从头匹配可以将lastIndex设置为0
+var sToMatch = 'bbq is short for barbecue';
+var reB = /b/g;
+reB.exec(sToMatch);
+console.log(reB.lastIndex); // 1
+reB.lastIndex = 0;
+reB.exec(sToMatch);
+console.log(reB.lastIndex); // 1 又从头开始匹配
+
+// 7.4.2 静态属性
+// input          $_    最后用于匹配的字符串(传递给exec()或test()的字符串)
+// lastMatch      $&    最后匹配的字符
+// lastParen      $+    最后匹配的分组
+// leftContext    $`    在上次匹配的前面的子串
+// rightContext   $'    在上次匹配之后的子串
+// multiline      $*    用于指定是否所有的表达式都使用多行模式的布尔值
+// 这些属性可以告诉你关于刚使用的exec() 或 test() 完成的匹配的一些特定信息
+var sToMatch = 'this has been a short, short summer';
+var reShort = /(s)hort/g;
+reShort.test(sToMatch);
+console.log(RegExp.input);        // this has been a short, short summer
+console.log(RegExp.leftContext);  // this has been a
+console.log(RegExp.rightContext); // , short summer
+console.log(RegExp.lastMatch);    // short
+console.log(RegExp.lastParen);    // s
+// 使用
+// input属性总是等于测试用的字符串
+// RegExp.leftContext 包含第一个实例'short'之前的所有字符,
+// 同时 RegExp.rightContext 包含第一个实例'short'之后的所有字符
+// lastMatch的属性包含最后匹配整个正则表达式的字符串, 也就是'short'
+// lastParen 属性包含最后匹配的分组, 这里是's'
+// 也可以使用这些属性的短名字, 并且对其中大部分名字必须使用方括号标记, 因为有些名字在ECMAScript的语法中不合法
+var sToMatch = 'this has been a short, short summer';
+var reShort = /(s)hort/g;
+reShort.test(sToMatch);
+console.log(RegExp.$_);       // this has been a short, short summer
+console.log(RegExp["$`"]);    // this has been a
+console.log(RegExp["$'"]);    // , short summer
+console.log(RegExp["$&"]);    // short
+console.log(RegExp["$+"]);    // s
+
+// 每次执行exec()或test()时, 所有属性(除multiline外)都会被重新设置
+var sToMatch1 = 'this has been a short, short summer';
+var sToMatch2 = 'this has been a long, long summer';
+var reShort = /(s)hort/g;
+var reLong = /(l)ong/g;
+
+reShort.test(sToMatch1);
+console.log(RegExp.$_);       // this has been a short, short summer
+console.log(RegExp["$`"]);    // this has been a
+console.log(RegExp["$'"]);    // , short summer
+console.log(RegExp["$&"]);    // short
+console.log(RegExp["$+"]);    // s
+
+reShort.test(sToMatch2);
+console.log(RegExp.$_);       // this has been a long, long summer
+console.log(RegExp["$`"]);    // this has been a
+console.log(RegExp["$'"]);    // , long summer
+console.log(RegExp["$&"]);    // long
+console.log(RegExp["$+"]);    // l
+
+// 这里第二个正则表达式reLong, 是在reShort之后使用的, 所有的RegExp属性都设成新的值
+
+// 而multiline属性不同于其他属性, 不依赖于最后一次执行的匹配
+// 相反它可以设置所有的正则表达式的m选项
+var sToMatch = 'First second\n third fourth\nfifth sixth';
+var reLastWordOnLine = /(\w+)$/g;
+RegExp.multiline = true;
+var arrWords = sToMatch.match(reLastWordOnLine); //["sixth"]
+// 大部分浏览器不支持, 还是换成 /(\w+)$/gm
+var sToMatch = 'First second\n third fourth\nfifth sixth';
+var reLastWordOnLine = /(\w+)$/gm;
+var arrWords = sToMatch.match(reLastWordOnLine); // ["second", "fourth", "sixth"]
+
 // 5 常用模式
 // 正则表达式常用来在发送数据到服务器之前对用户的输入进行验证
 // Web上最常见的几种用于测试的模式是
@@ -556,12 +723,12 @@ console.log(sToMatch24.replace(re24, 'jimmy')); // jimmy
 var reDate = /\d{1,2}\/\d{1,2}\/\d{4}/;
 console.log(reDate.test('6/13/2004'));  // true
 console.log(reDate.test('25/06/2004')); // true
-
 // 55/44/2004
+// 天数
 var reDay = /[0-3]?[0-9]/;
-// 32 - 39
+// 32 - 39 也会匹配
 var reDay1 = /0[1-9]|[12][0-9]|3[01]/; // 几乎没有漏洞
-
+//月份
 var reMonth = /0[1-9]|1[0-2]/;
 
 // 将日期限制在1900-2099年之间, 考虑到2099年来的那一天, 用这些代码的系统肯定已经被放进垃圾箱了
@@ -569,7 +736,7 @@ var reYear = /19|20\d{2}/;
 // 这个模式声明, 年份必须以19或者20开头, 后面跟两个数字
 
 // ?: 是 不想被捕获的时候使用 可以提高程序执行速度
-var reDate1 = /(?:0?[1-9]|[12][0-9]|3[01])\/(?:0[1-9]|1[0-2])\/(?:19|20\d{2})/;
+var reDate1 = /(?:0[1-9]|[12][0-9]|3[01])\/(?:0[1-9]|1[0-2])\/(?:19|20\d{2})/;
 // 注意整个模式是将日期的每个部分放入非捕获性分组中, 这是为了确保可选项不会互相冲突; 当然, 如果需要, 也可以使用捕获性分组
 
 // 最后, 使用一个函数来检测日期是否有效, 通过把正则表达式包装成函数 isValidDate() 并进行测试
@@ -583,5 +750,138 @@ console.log(isValidDate('10/12/2009'));// true
 console.log(isValidDate('6/13/2000')); // false
 
 // 5.2 验证信用卡号
-// 信用卡16位, 前两个数字必须是51-55之间的数字
-var reMasterCard = /^5/;
+// 为避免再返回服务器, 可以创建一些简单的模式来判断一个信用卡号是否有效, 前端验证
+// MasterCard 的信用卡号开始; 信用卡16位, 前两个数字必须是51-55之间的数字
+var reMasterCard = /^5[1-5]\d{14}$/;
+// 脱字符和美元符, 表示输入字符串的开头和结尾以保证匹配整个字符串, 而不仅仅是它的一部分
+// 问题, 每四个数码之间有空格或短横 5555-5555-5555-5555
+var reMasterCard = /^5[1-5]\d{2}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4}$/;
+// 真正检验信用卡号, 用到Luhn算法
+// Luhn算法是验证唯一标示符的方法, 常常用来验证信用卡号
+// 然而, 必须从用户输入中抽取出数字, 才能将数字应用于这个算法, 因此必须加入捕获性分组
+var reMasterCard = /^(5[1-5]\d{2})[\s\-]?(\d{4})[\s\-]?(\d{4})[\s\-]?(\d{4})$/;
+
+function isValidMasterCard(sText) {
+	var reMasterCard = /^(5[1-5]\d{2})[\s\-]?(\d{4})[\s\-]?(\d{4})[\s\-]?(\d{4})$/;
+
+	if (reMasterCard.test(sText)) {
+		var sCardNum = RegExp.$1 + RegExp.$2 + RegExp.$3 + RegExp.$4;
+
+		// Luhn algorithm here
+
+	} else {
+		return false;
+	}
+}
+
+// Luhn 算法有四步, 第一步是从卡号的最后一个数字开始, 并逆向地逐个将奇数位置(1、3等)的数字相加
+function luhnCheckSum(sCardNum) {
+	var iOddSum = 0;
+	var bIsOdd = true;
+
+	for (let i = sCardNum.length - 1; i >= 0; i--) {
+		var iNum = parseInt(sCardNum.charAt(i));
+
+		if(bIsOdd) {
+			iOddSum += iNum;
+		}
+
+		bIsOdd = !bIsOdd;
+	}
+}
+
+// 第二步是将偶数位置的数字相加
+// 且必须先将数字乘以2, 然后如果结果是两位数, 必须将两个位上的数字相加, 然后将结果加入到总和中
+function luhnCheckSum(sCardNum) {
+	var iOddSum = 0;
+	var iEvenSum = 0;
+	var bIsOdd = true;
+
+	for (let i = sCardNum.length - 1; i >= 0; i--) {
+		var iNum = parseInt(sCardNum.charAt(i));
+		if(bIsOdd) {
+			iOddSum += iNum;
+		} else {
+			iNum = iNum * 2;
+			if(iNum > 9) {
+				iNum = eval(iNum.toString().split('').join('+'));// eval 用于计算含表达式的字符串
+			}
+			iEvenSum += iNum;
+		}
+
+		bIsOdd = !bIsOdd;
+	}
+}
+// 字符串传给eval(), 可以将字符串翻译为代码并执行(这样"1+2"就返回3)
+
+// 最后一步将两个总和(奇数部分和偶数部分)相加并对结果取模(余数), 如果数字是合法的, 那么结果应该可以被10整除
+function luhnCheckSum(sCardNum) {
+	var iOddSum = 0;
+	var iEvenSum = 0;
+	var bIsOdd = true;
+
+	for (let i = sCardNum.length - 1; i >= 0; i--) {
+		var iNum = parseInt(sCardNum.charAt(i));
+		if(bIsOdd) {
+			iOddSum += iNum;
+		} else {
+			iNum = iNum * 2;
+			if(iNum > 9) {
+				iNum = eval(iNum.toString().split('').join('+'));// eval 用于计算含表达式的字符串
+			}
+			iEvenSum += iNum;
+		}
+
+		bIsOdd = !bIsOdd;
+	}
+
+	return ((iEvenSum + iOddSum) % 10 === 0);
+}
+
+// 把这个方法加入到验证函数
+function isValidMasterCard(sText) {
+	var reMasterCard = /^(5[1-5]\d{2})[\s\-]?(\d{4})[\s\-]?(\d{4})[\s\-]?(\d{4})$/;
+
+	if (reMasterCard.test(sText)) {
+		var sCardNum = RegExp.$1 + RegExp.$2 + RegExp.$3 + RegExp.$4;
+
+		// Luhn algorithm here
+		return luhnCheckSum(sCardNum);
+
+	} else {
+		return false;
+	}
+}
+
+// 至于其他类的信用卡号, 必须了解管理这些卡号的规则
+// Visa卡号可能13位或16位, 且首位数字总是4,
+var reVisa = /^(4\d{12}(?:\d{3})?)$/;
+function isValidVisa(sText) {
+	var reVisa = /^(4\d{12}(?:\d{3})?)$/;
+
+	if(reVisa.test(sText)) {
+		return luhnCheckSum(RegExp.$1);
+	} else {
+		return false;
+	}
+}
+
+// 7.5.3 验证电子邮件地址
+// RFC2822
+// 格式 字符串 + @ + 字符串
+// @前至少有一个字符, 其后至少有三个字符, 这三个字符中第二个必须是个句号(a@a.b有效, a@a无效, a@a.无效)
+var reEmail = /^(?:\w+\.?)*\w+@(?:\w+\.?)+\w+$/;
+function isValidEmail(sText) {
+	var reEmail = /^(?:\w+\.?)*\w+@(?:\w+\.?)*\w+$/;
+	return reEmail.test(sText);
+}
+
+// 正则表达式以非捕获性分组(?:\w+\.?)开始, 告诉你至少一个单词字符可以跟零个或一个句号, 这部分可以出现任意次(a.b.c.d), 星号
+// \w+@保证@之前至少有一个单词字符, 然后紧跟一个非捕获性分组(?:\w+\.), 它可以出现一次或多次, 所以使用加号,
+// 表达式最后一部分是\w+$, 表示一行的最后字符必须是一个单词字符, 因此'john@doe.'地址不合法
+
+// 7.6 小结
+// 正则表达式 Perl风格和RegExp构造函数
+// 字符字面量 >> 字符类、量词和分组
+// 高级正则表达技巧 候选项、前瞻、边界和多行模式
+// 应用 删除多余空格和不必要的HTML, 验证日期、信用卡号和电子邮件地址
