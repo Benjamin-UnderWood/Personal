@@ -9,7 +9,7 @@ class Slider {
         if (controller) {
             let buttons = document.querySelectorAll('.slide-list__control-buttons, .slide-list__control-buttons--selected');
             controller.addEventListener('mouseover', evt => {
-                console.log('mouseover')
+                console.log('mouseover');
                 var idx = Array.from(buttons).indexOf(evt.target);
                 if (idx >= 0) {
                     this.slideTo(idx);
@@ -17,7 +17,7 @@ class Slider {
                 }
             });
 
-            controller.addEventListener('mouseout', evt => {
+            controller.addEventListener('mouseout', () => { // 箭头函数不可以使用 arguments, 该对象在函数体内不存在, 如果要用使用rest参数代替
                 this.start();
             });
 
@@ -35,8 +35,7 @@ class Slider {
     // API部分
     // 获得当前展示的图片
     getSelectedItem() {
-        let selected = this.container.querySelector('.slider-list__item--selected');
-        return selected;
+	    return this.container.querySelector('.slider-list__item--selected');
     }
     // 当前选中图片的编号
     getSelectedItemIndex() {
@@ -93,33 +92,18 @@ const slider = new Slider('my-slider');
 slider.start();
 
 // 外部测试 addSlideListener
+const slideNext = document.getElementById('slideNext');
 slideNext.onclick = function(){
     slider.slideNext();
-}
+};
 
+const slidePrevious = document.getElementById('slidePrevious');
 slidePrevious.onclick = function(){
     slider.slidePrevious();
-}
+};
 
+const slideState = document.getElementById('slideState');
 slider.addSlideListener(function(idx){
     // console.log(slideStat)
-    slideStat.textContent = `当前第 ${idx} 页`
+	slideState.textContent = `当前第 ${idx} 页`
 }); // 在这里推入，但会被组件里面的函数调用！！！
-
-
- /**this.slideHandlers = [];
-
-    addSlideListener(handler) {
-        this.slideHandlers.push(handler); // 回调函数推入队列
-    } // handler 处理程序，处理函数
-
-    this.addSlideListener(function(idx) {
-        let selected = controller.querySelector('.slide-list__control-buttons--selected');
-        if(selected) selected.className = 'slide-list__control-buttons';
-        buttons[idx].className = 'slide-list__control-buttons--selected';
-    });
-
-    this.slideHandlers.forEach(handler => {
-        handler(idx);
-    }); // 对 handler 函数(也就是上面 addSlideListener后的那个函数) 进行回调 callback
-   */
