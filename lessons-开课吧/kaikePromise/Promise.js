@@ -9,21 +9,21 @@
 //
 // 异步
 ajax('/banners', function(banner_data){
- ajax('/hotItems', function(hotitem_data){
-     ajax('/sides', function(side_data){
-         ajax('/sides', function(side_data){
+	ajax('/hotItems', function(hotitem_data){
+		ajax('/sides', function(side_data){
+			ajax('/sides', function(side_data){
 
-         }, function(){
-             alert('读取失败')
-         })
-     }, function(){
-         alert('读取失败')
-     })
- }, function(){
-     alert('读取失败')
- })
+			}, function(){
+				alert('读取失败')
+			})
+		}, function(){
+			alert('读取失败')
+		})
+	}, function(){
+		alert('读取失败')
+	})
 }, function(){
-    alert('读取失败')
+	alert('读取失败')
 });
 
 // 同步：
@@ -52,13 +52,13 @@ ajax('/banners', function(banner_data){
 //     alert('失败了')
 // })
 Promise.all([
-    $.ajax(),
-    $.ajax()
-    // 这里可以放很多很多个ajax请求
+	$.ajax(),
+	$.ajax()
+	// 这里可以放很多很多个ajax请求
 ]).then(results => {
-    // 对了
+	// 对了
 }, err => {
-    // 错了
+	// 错了
 });
 
 // --------------------------------------------------------------------------------
