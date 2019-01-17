@@ -18,7 +18,7 @@ Promise.all([
     $.ajax({url: 'data/json.txt', dataType: 'json'})
 ]).then(function(results){
     let [arr, json] = results;
-    alert('成功了')
+    alert('成功了');
     console.log(arr, json)
 }, function(){
     alert('失败了')
