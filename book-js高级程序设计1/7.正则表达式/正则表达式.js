@@ -244,7 +244,7 @@ var sToMatch15 = "abbbaabbbaaabbb1234";
 var re1 = /.*bbb/g;
 console.log(re1.test(sToMatch15)); // true
 var arrMatches15 = sToMatch15.match(re1);
-console.log(arrMatches15); // [ 'abbbaabbbaaabbb' ]  匹配尽可能多的字符
+console.log(arrMatches15); // [ 'abbbaabbbaaabbb' ]  匹配尽可能多的字符 从后往前
 // . 点代表的是任意字符, b 也包括在内, 因此 'abbbaabbbaaa' 匹配表达式 .* 的部分, 'bbb'匹配表达式中bbb的部分
 
 // 贪婪量词的工作过程可以这样表示：
@@ -257,7 +257,7 @@ console.log(arrMatches15); // [ 'abbbaabbbaaabbb' ]  匹配尽可能多的字符
 
 var re2 = /.*?bbb/g;
 var arrMatches16 = sToMatch15.match(re2);
-console.log(arrMatches16); // [ 'abbb', 'aabbb', 'aaabbb' ]  匹配尽可能少的字符
+console.log(arrMatches16); // [ 'abbb', 'aabbb', 'aaabbb' ]  匹配尽可能少的字符 从前往后
 
 // 惰性量词的工作过程可以这样表示：
 // a)a
@@ -499,16 +499,16 @@ console.log(RegExp.$1); // one
 
 // 还可以容易获取到一行的第一个单词, 使用脱字符号(^)
 var sToMatch = 'Important word is tha last one.';
-var reFirstWord = /^(\w+)/; // 一个至少一个字符的单词并且以.结尾
+var reFirstWord = /^(\w+)/; // 一个至少一个字符的单词并且行首
 reFirstWord.test(sToMatch);
 console.log(RegExp.$1); // Important
 
 // 这个例子也可以用单词边界实现
 var sToMatch = 'Important word is tha last one.';
-var reFirstWord = /^(.+?)\b/;
+var reFirstWord = /^(.+?)\b/; // 惰性
 reFirstWord.test(sToMatch);
 console.log(RegExp.$1); // Important
-// 正则表达式用惰性量词来制定在单词边界之前就可以出现任何字符, 并且可以出现一次货多次(字符),
+// 正则表达式用惰性量词来制定在单词边界之前就可以出现任何字符, 并且可以出现一次或多次(字符),
 // 如果使用贪婪量词, 表达式就匹配整个字符串(因为可以包含空白)
 
 // 使用单词边界可以方便地从字符串中抽取单词
@@ -584,7 +584,7 @@ console.log(arrMatches24); // [ 'http://blog.seetiny.com', index: 0, input: 'htt
 console.log(sToMatch24.replace(re24, 'jimmy')); // jimmy
 
 // ^和$用处非常多，常见的就是使用sublime编辑给每行文本开始和技术加引号，括号逗号什么的，非常方便
-// 例如有一堆字符串要写SQL插入到数据库
+// 例如有一堆字符串要写SQL插入到数据库(行首, 行尾)
 // 85353001071
 // 85353001071
 // 85959001280
