@@ -41,3 +41,5 @@ var myObj = new Class();
 
 console.log([myObj.publicData, myObj.privateData, myObj.getData()]);
 // 运行结果  ["publicData", undefined, "privateData" ]
+
+// 两种写法的目的, 都是为了把privateData保护起来, 只暴露能访问其的方法
