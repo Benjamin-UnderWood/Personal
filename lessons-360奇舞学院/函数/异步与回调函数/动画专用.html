@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #brick {
+            display: inline-block;
+            background-color: gray;
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            line-height: 50px;
+            color: white; 
+        }
+    </style>
+</head>
+<body>
+    <div id="brick"></div>
+    <script>
+        const brick = document.getElementById('brick');
+
+        brick.addEventListener('click', function () {
+            let startTime = Date.now();
+            let cycle = 2000;
+
+            requestAnimationFrame(function update() {
+                let p = (Date.now() - startTime) / cycle;
+
+                brick.style.transform = 'rotate(' + 360 * p + 'deg)';
+
+                requestAnimationFrame(update);
+            })
+        })
+    </script>
+</body>
+</html>

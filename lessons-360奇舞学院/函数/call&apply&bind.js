@@ -26,7 +26,6 @@ function foo(){
 
 foo(); // false true
 
---------------------------------------------------------------------------------
 // apply
 // call后面接受原始参数，apply后面接受数组(传入函数的参数)
 
@@ -48,7 +47,6 @@ var foo2 = __reverseArgs__(foo);
 
 foo2(1, 2, 3, 4); // [ 4, 3, 2, 1 ]
 
---------------------------------------------------------------------------------
 // call 与 bind
 function setBodyState(state){
     document.body.calssName = state;

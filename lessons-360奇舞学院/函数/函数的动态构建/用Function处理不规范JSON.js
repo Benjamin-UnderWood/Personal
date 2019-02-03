@@ -13,9 +13,10 @@ function parseData(data){
 
 try{
     console.log(JSON.parse(brokenJSON));
-}catch(ex){
+} catch(ex) {
     console.log(ex.message);
-    console.log(parseData(brokenJSON));
+    console.log(parseData(brokenJSON)); // {a: 1, b: 2, c: "message"} 
+    // typeof(parseData(brokenJSON));   // object
 }
 
 // 例子
