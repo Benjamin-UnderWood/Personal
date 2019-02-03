@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./jquery-1.3.2.js"></script>
+</head>
+<body>
+<ul id="datalist">
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+    <li>4</li>
+    <li>5</li>
+    <li>6</li>
+</ul>
+<script>
+function __watch__(fn) {
+    return function f(...args) {
+        if (f.before) {
+            f.before(this, ...args);
+        }
+
+        let ret = fn.apply(this, args);
+        if (f.after) {
+            f.after(this, ret, ...args);
+        }
+
+        return ret;
+    }
+}
+
+$ = __watch__($); // 拦截jQuery的$
+
+$.after = function (thisObj, retVal) {
+    if (retVal.css) {
+        retVal.css = __watch__(retVal.css);
+        retVal.css.before = function () {
+            console.log('不推荐使用 .css, 建议使用.addClass');
+        }
+    }
+}
+
+let el = $('#datalist > li');
+
+el.css('color', 'red');
+</script>
+</body>
+</html>
