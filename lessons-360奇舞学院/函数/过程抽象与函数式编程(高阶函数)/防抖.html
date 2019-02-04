@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #btn {
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            background-color: darkgray;
+            text-align: center;
+            cursor: pointer;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div id="btn">点我</div>
+<script>
+// 慢慢点击btn, 每次都生效; 持续快速点击btn, 不生效(防抖), 等点完最后一次后, 才只会生效一次
+const btn = document.getElementById('btn');
+
+function debounce(fn, delay) {
+    var timer = null;
+    return function(...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay); // delay 是关键
+    }
+}
+
+btn.onclick = debounce(function() {
+    console.log('clicked');
+}, 300);
+</script>
+</body>
+</html>

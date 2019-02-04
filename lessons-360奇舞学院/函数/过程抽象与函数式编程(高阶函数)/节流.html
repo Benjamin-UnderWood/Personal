@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #btn {
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            background-color: darkgray;
+            text-align: center;
+            cursor: pointer;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div id="btn">点我</div>
+<script>
+const btn = document.getElementById('btn');
+
+function throttle(fn, wait) {
+    var timer;
+    return function(...args) {
+        if(!timer) {
+            timer = setTimeout(() => timer=null, wait); // 点击后, 在一段时间内再次点击失效
+            return fn.apply(this, args);
+        } 
+    }
+}
+
+// 按钮每 5000ms 一次点击有效; 点击后 5000ms 内再次点击无效(类似于发送短信验证码)
+btn.onclick = throttle(function() {
+   console.log('button clicked'); 
+}, 5000);
+</script>
+</body>
+</html>
