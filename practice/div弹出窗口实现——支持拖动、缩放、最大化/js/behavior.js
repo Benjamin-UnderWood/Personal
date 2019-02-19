@@ -32,17 +32,10 @@ btns.forEach(btn => {
 
 // 事件代理
 document.getElementById('system').addEventListener('showDialog', function(evt) {
-    console.log('showDialog');
-    generateDialog(); // param, 传入参数, 用于确定是什么类型的弹窗 ?
-});
-
-function generateDialog(param) {
-    var dialog = new CreateDialog();
-}
-
-// 弹窗类
-function CreateDialog() {
-    this.html = `
+    // TODO: 实际上dom为各种类型的弹窗(agent中基类生成的子类)
+    // TODO: 实际上应该是请求得到的数据
+    var html =
+     `
     <div class="dialog" minheight="320" minwidth="660">
     <div class="dlg_top">
         <!-- <img class="dlg_logo" src="images/ico_logo.png"/> -->
@@ -62,42 +55,52 @@ function CreateDialog() {
     <div class="dlg_right_div"></div>
     <div class="dlg_right_bottom_div"></div>
     <div class="dlg_bottom_div"></div>
-    </div> `;
+    </div> 
+    `;
+    document.getElementById('dialogs').insertAdjacentHTML('beforeend', html);
+    // 每次操作的总是最后一个弹窗(显示在页面最前面的)
+    // TODO: 点击某个弹窗顶部, 会使得该弹窗置于最前(位置跑到最后)
+    let dom = $('#dialogs').lastElementChild;
+    console.log(dom);
+    let dialog = new Dialog(dom); // dom 用于确定是什么类型的弹窗 
+});
 
-    this.init();
+// 弹窗类
+function Dialog(dom) {
+    this.dom = dom; // 弹窗dom对象
+
+    // TODO: 记录最大化窗口时每个弹窗实例的位置(供还原时计算窗口位置用)
+    this.preDialogWidth = 0; 
+    this.preDialogHeight = 0;
+    this.preDialogLeft = "0px";
+    this.preDialogTop = "0px";
+
+    // TODO: 记录拖拽窗口时每个弹窗实例的位置 
+    this.mouseStart = {};
+    this.rightStart = {};
+
+    // 事件委托; dialog实例上的各个功能委托在 dialog dom 元素上
+    // 隐藏弹窗
+    $(this.dom).on("click", ".dlg_btn_close", function() {
+        console.log('隐藏弹窗了');
+    }); 
 };
 
-CreateDialog.prototype.init = function (params) {
-    document.getElementById('system').insertAdjacentHTML('beforeend', this.html);
-    
-    this.bindEvents();
-}
-
-CreateDialog.prototype.bindEvents = function() {
+Dialog.prototype.bindEvents = function() {
     var $system = $('#system');
     // 事件代理, 因为dom一开始没有
-    $system.on("click", ".dlg_btn_close", hideDialog);    
+    $system.on("click", ".dlg_btn_close", hideDialog.bind(this));    
     // $("#dlg_submit").on("click", submitHandler);
 
     // 移动
-    $system.on("mousedown", ".dialog", moveHandler);
+    $system.on("mousedown", ".dialog", moveHandler.bind(this));
 
     // 最大化 || 还原
     $system.on("click", ".dlg_btn_max_top", maxDialog);
     $system.on("click", ".dlg_btn_reback_top", rebackDialog);
-}
 
-// 最大化时保存弹窗的位置大小 // 每个弹窗自己单独一份
-var preDialogWidth = 0; 
-var preDialogHeight = 0;
-var preDialogLeft = "0px";
-var preDialogTop = "0px";
-
-// 隐藏弹窗
-function hideDialog() {
-    var evt = arguments[0];
-    $dialog = $(evt.target).parents('.dialog');
-    $dialog.hide(); // 是hide还是删除, 有待考虑, hide 节约性能
+    // 拖拽: 支持右拉/下拉/右下拉
+    $system.on("mousedown", ".dlg_right_div", pullright.bind(this));
 }
 
 // 移动
@@ -158,3 +161,43 @@ function rebackDialog() {
     $(this).removeClass("dlg_btn_reback_top").addClass("dlg_btn_max_top");
     // $(this).off("click").on("click", maxDialog);
 }
+
+// 右拉
+function pullright() {
+    // console.log(this); 默认this为事件对象
+    console.log(this); // bind过的this, 即为实例
+    var evt = arguments[0];
+    this.mouseStart.x = evt.clientX;
+    this.mouseStart.y = evt.clientY;
+    this.rightStart.x = evt.currentTarget.offsetLeft;
+    
+    document.addEventListener("mousemove", doDragToRightBottomToRight.bind(this), true);
+    document.addEventListener("mouseup", stopDragToRightBottomToRight, true);
+
+}
+
+function doDragToRightBottomToRight(ev) {
+    var oEvent = ev || event;
+    var l = oEvent.clientX - this.mouseStart.x + this.rightStart.x;
+    var w = l + el_dlg_right_bottom.offsetWidth;
+    if (w < el_dlg_right_bottom.offsetWidth) {
+        w = el_dlg_right_bottom.offsetWidth;
+    }
+    else if (w > document.documentElement.clientWidth - el_dialog.offsetLeft) {
+        w = document.documentElement.clientWidth - el_dialog.offsetLeft - 2;
+    }
+    if (w < minWidth) return;
+    el_dialog.style.width = w + "px";
+};
+
+function stopDragToRightBottomToRight(evt) {
+    if (evt.currentTarget.releaseCapture) {
+        evt.currentTarget.onmousemove = null;
+        evt.currentTarget.onmouseup = null;
+        evt.currentTarget.releaseCapture();
+    }
+    else {
+        document.removeEventListener("mousemove", doDragToRightBottomToRight, true);
+        document.removeEventListener("mouseup", stopDragToRightBottomToRight, true);
+    }
+};
