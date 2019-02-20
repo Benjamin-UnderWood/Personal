@@ -1,129 +1,148 @@
-console.log('生效了');
-// 把弹出框按钮抽象成一个行为, 而不是封装成一个组件
-var btns = document.querySelectorAll('.btn');
-
-// 设置弹出框的方法, setShowDialogBehvior
-function setShowDialogBehvior(subjects) {
-    var showDialogEvent = document.createEvent('Event'); // 自定义 DOM 事件
-    showDialogEvent.initEvent('showDialog', true, true); // 初始化; initEvent()方法用于初始化通过 document.createEvent 接口创建的Event的
-
-    if (!Array.isArray(subjects)) {
-        if(subjects.length) subjects = Array.from(subjects);
-        else subjects = [subjects];
+// 生成对象 createObject 行为模式
+class SetBehavior {
+    constructor(subjects){
+        this.subjects = subjects;
+        this.init();
     }
 
-    subjects.forEach(function(subject) {
-        subject.showDialog = function() {
-            subject.dispatchEvent(showDialogEvent);
+    init() {
+        var subjects = this.subjects;
+        this.setBehavior(subjects);
+        subjects.forEach(subject => {
+            subject.addEventListener('click', evt => {
+                console.log(evt.target);
+                if (evt.target.createObject) {
+                    // evt.target.createObject(); >> 用点击行为触发创建对象的行为
+                    var data;
+                    var child = new Child(data);
+                }
+            });
+        });
+    }
+
+    setBehavior(subjects) {
+        var createEvent = document.createEvent('Event'); // 自定义 DOM 事件
+        createEvent.initEvent('createObject', true, true); // 初始化; initEvent()方法用于初始化通过 document.createEvent 接口创建的Event的
+
+        if (!Array.isArray(subjects)) {
+            if (subjects.length) subjects = Array.from(subjects);
+            else subjects = [subjects];
         }
-    });
+
+        subjects.forEach(function (subject) {
+            subject.createObject = function () {
+                subject.dispatchEvent(createEvent);
+            }
+        });
+    }
 }
-// 以上就是抽象行为的函数
+// 弹窗之上的层级, 基类, 弹窗只是子类的一个属性
+class Child {
+    constructor(data) {
+        this.data = data;
+        this.init();
+    }
 
-// 把所有的btns赋给行为
-setShowDialogBehvior(btns);
+    init() {
+        // 初始化实例数据
+        // TODO: 记录最大化窗口时每个弹窗实例的位置(供还原时计算窗口位置用)
+        this.preDialogWidth = 0; 
+        this.preDialogHeight = 0;
+        this.preDialogLeft = "0px";
+        this.preDialogTop = "0px";
+        // TODO: 记录拖拽窗口时每个弹窗实例的位置 
+        this.mouseStart = {};
+        this.rightStart = {};
 
-// 通过 click 事件触发 showDialog 行为(触发机制)
-btns.forEach(btn => {
-    btn.addEventListener('click', evt => {
-        if(evt.target.showDialog) evt.target.showDialog();
-    });
-});
+        // 调用方法
+        this.createDialog();
+        this.click();
+    }
 
-// 事件代理
-document.getElementById('system').addEventListener('showDialog', function(evt) {
-    // TODO: 实际上dom为各种类型的弹窗(agent中基类生成的子类)
-    // TODO: 实际上应该是请求得到的数据
-    var html =
-     `
-    <div class="dialog" minheight="320" minwidth="660">
-    <div class="dlg_top">
-        <!-- <img class="dlg_logo" src="images/ico_logo.png"/> -->
-        <label class="dlg_title">弹出窗口</label>                
-        <input class="dlg_btn_close dlg_btn_ico dlg_btn_close_top" type="button"/>                
-        <input class="dlg_btn_ico dlg_btn_max_top" type="button"/>
-    </div>
-    <div class="dlg_content">
-        <label style="display:inline-block; margin:10px;line-height:26px;">
-        </label>
-    </div>
-    <div class="dlg_bottom">
-        <input class="btn" type="button" value="提交" />
-        <input class="dlg_btn_close btn" type="button" value="关闭" />
-    </div>
-    <!-- 缩放窗口用 -->
-    <div class="dlg_right_div"></div>
-    <div class="dlg_right_bottom_div"></div>
-    <div class="dlg_bottom_div"></div>
-    </div> 
-    `;
-    document.getElementById('dialogs').insertAdjacentHTML('beforeend', html);
-    // 每次操作的总是最后一个弹窗(显示在页面最前面的)
-    // TODO: 点击某个弹窗顶部, 会使得该弹窗置于最前(位置跑到最后)
-    let dom = $('#dialogs').lastElementChild;
-    console.log(dom);
-    let dialog = new Dialog(dom); // dom 用于确定是什么类型的弹窗 
-});
+    createDialog() {
+        var that = this;
+        // TODO: 实际上dom为各种类型的弹窗(agent中基类生成的子类)
+        // TODO: 实际上应该是请求得到的数据渲染而成的dom; dom 与 数据在同一层级
+        var dialog = document.createElement("div");
+        var dlg_top = document.createElement("div");
+        var dlg_content = document.createElement("div");
+        var dlg_btn_close = document.createElement("input");
+        // 能点击生成新对象的元素
+        var dlg_newChildBtn = document.createElement("button");
+        var dlg_newChildDiv = document.createElement("div");
 
-// 弹窗类
-function Dialog(dom) {
-    this.dom = dom; // 弹窗dom对象
+        dialog.appendChild(dlg_top);
+        dialog.appendChild(dlg_content);
+        dialog.appendChild(dlg_newChildBtn);
+        dialog.appendChild(dlg_newChildDiv);
+        dialog.setAttribute('class', 'dialog');
+        dlg_top.setAttribute('class', 'dlg_top');
+        dlg_content.setAttribute('class', 'dlg_content');
+        dlg_top.appendChild(dlg_btn_close);
+        dlg_btn_close.setAttribute('class', 'dlg_btn_close dlg_btn_ico dlg_btn_close_top');
+        dlg_newChildBtn.setAttribute('class', 'btn createObject');
+        dlg_newChildDiv.setAttribute('class', 'btn divBtn createObject'); // 方便控制样式, 直接随便btn类
 
-    // TODO: 记录最大化窗口时每个弹窗实例的位置(供还原时计算窗口位置用)
-    this.preDialogWidth = 0; 
-    this.preDialogHeight = 0;
-    this.preDialogLeft = "0px";
-    this.preDialogTop = "0px";
+        document.body.appendChild(dialog);
+        this.dialog = dialog;
 
-    // TODO: 记录拖拽窗口时每个弹窗实例的位置 
-    this.mouseStart = {};
-    this.rightStart = {};
+        dlg_btn_close.addEventListener('click', hideDialog);
+        function hideDialog() {
+            dialog.style.display = 'none';
+        }
 
-    // 事件委托; dialog实例上的各个功能委托在 dialog dom 元素上
-    // 隐藏弹窗
-    $(this.dom).on("click", ".dlg_btn_close", function() {
-        console.log('隐藏弹窗了');
-    }); 
-};
+        dialog.addEventListener('mousedown', moveHandler);
 
-Dialog.prototype.bindEvents = function() {
-    var $system = $('#system');
-    // 事件代理, 因为dom一开始没有
-    $system.on("click", ".dlg_btn_close", hideDialog.bind(this));    
-    // $("#dlg_submit").on("click", submitHandler);
+        function moveHandler() {
+            var evt = arguments[0];
+            var $trgt = $(event.target);
+            if (!$trgt.hasClass("dlg_top")) return; // 用于判断是否处在能移动窗口的位置上
 
-    // 移动
-    $system.on("mousedown", ".dialog", moveHandler.bind(this));
+            var $this = $(this);
+            var el = $this[0];
+            var oevent = evt || event;
+            var distanceX = oevent.clientX - el.offsetLeft;
+            var distanceY = oevent.clientY - el.offsetTop;
+            $(document).bind("mousemove", function (evt) {
+                var oevent = evt || event;
+                el.style.left = oevent.clientX - distanceX + 'px';
+                el.style.top = oevent.clientY - distanceY + 'px';
+            });
+            $(document).bind("mouseup", function () {
+                $(document).unbind("mousemove");
+                $(document).unbind("mouseup");
+            });
+        }
+        // 每次操作的总是最后一个弹窗(显示在页面最前面的)
+        // TODO: 点击某个弹窗顶部, 会使得该弹窗置于最前(位置跑到最后) 
+    }
 
-    // 最大化 || 还原
-    $system.on("click", ".dlg_btn_max_top", maxDialog);
-    $system.on("click", ".dlg_btn_reback_top", rebackDialog);
+    // 点击类中的元素, 会生成新的类
+    click() {
+        // 传统写法
+        var that = this;
+        // 点击能生成子类的元素, 生成子类 ex button
+        // $(this.dialog).find('button').on('click', function(){
+        //     var data; // 传入所需要的数据, 一般是在基类上的信息
+        //     var child = new Child(data);
+        // });
+        // ex 特定的div
+        // $(this.dialog).find('.divBtn').on('click', function(){
+        //     var data; // 传入所需要的数据, 一般是在基类上的信息
+        //     var child = new Child(data);
+        // });
+        // ex 其他能点击生成子类的元素, 可能还有很多很多
+        // 缺点 需要一个元素一个元素的绑定事件(本质上这些事件是同一个行为, 即生成对象)
 
-    // 拖拽: 支持右拉/下拉/右下拉
-    $system.on("mousedown", ".dlg_right_div", pullright.bind(this));
+        // TODO: 这时就需要用到行为模式了, 对所有具有生成子类能力的元素, 赋予生成子类的行为
+        // 将对象中所有具备 createObject 类的元素赋予 createObject 行为
+        new SetBehavior(this.dialog.querySelectorAll('.createObject')); // 可以直接写到 createDialog 里面
+    }
 }
 
-// 移动
-function moveHandler() {
-    var evt = arguments[0];
-    var $trgt = $(event.target);
-    if (!$trgt.hasClass("dlg_top")) return;
-
-    var $this = $(this);
-    var el = $this[0];
-    var oevent = evt || event;
-    var distanceX = oevent.clientX - el.offsetLeft;
-    var distanceY = oevent.clientY - el.offsetTop;
-    $(document).bind("mousemove", function (evt) {
-        var oevent = evt || event;
-        el.style.left = oevent.clientX - distanceX + 'px';
-        el.style.top = oevent.clientY - distanceY + 'px';
-    });
-    $(document).bind("mouseup", function () {
-        $(document).unbind("mousemove");
-        $(document).unbind("mouseup");
-    });
-}
+// 界面初始化, 已经存在子类(按照需要显示多少子类, 这里假设生成一个子类)
+var data;
+var child = new Child(data);
 
 // 最大化
 function maxDialog() {
@@ -161,43 +180,3 @@ function rebackDialog() {
     $(this).removeClass("dlg_btn_reback_top").addClass("dlg_btn_max_top");
     // $(this).off("click").on("click", maxDialog);
 }
-
-// 右拉
-function pullright() {
-    // console.log(this); 默认this为事件对象
-    console.log(this); // bind过的this, 即为实例
-    var evt = arguments[0];
-    this.mouseStart.x = evt.clientX;
-    this.mouseStart.y = evt.clientY;
-    this.rightStart.x = evt.currentTarget.offsetLeft;
-    
-    document.addEventListener("mousemove", doDragToRightBottomToRight.bind(this), true);
-    document.addEventListener("mouseup", stopDragToRightBottomToRight, true);
-
-}
-
-function doDragToRightBottomToRight(ev) {
-    var oEvent = ev || event;
-    var l = oEvent.clientX - this.mouseStart.x + this.rightStart.x;
-    var w = l + el_dlg_right_bottom.offsetWidth;
-    if (w < el_dlg_right_bottom.offsetWidth) {
-        w = el_dlg_right_bottom.offsetWidth;
-    }
-    else if (w > document.documentElement.clientWidth - el_dialog.offsetLeft) {
-        w = document.documentElement.clientWidth - el_dialog.offsetLeft - 2;
-    }
-    if (w < minWidth) return;
-    el_dialog.style.width = w + "px";
-};
-
-function stopDragToRightBottomToRight(evt) {
-    if (evt.currentTarget.releaseCapture) {
-        evt.currentTarget.onmousemove = null;
-        evt.currentTarget.onmouseup = null;
-        evt.currentTarget.releaseCapture();
-    }
-    else {
-        document.removeEventListener("mousemove", doDragToRightBottomToRight, true);
-        document.removeEventListener("mouseup", stopDragToRightBottomToRight, true);
-    }
-};
