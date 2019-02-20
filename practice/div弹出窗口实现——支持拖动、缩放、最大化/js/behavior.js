@@ -82,9 +82,8 @@ class Child {
         dlg_btn_close.setAttribute('class', 'dlg_btn_close dlg_btn_ico dlg_btn_close_top');
         dlg_newChildBtn.setAttribute('class', 'btn createObject');
         dlg_newChildDiv.setAttribute('class', 'btn divBtn createObject'); // 方便控制样式, 直接随便btn类
-
+       
         document.body.appendChild(dialog);
-        this.dialog = dialog;
 
         dlg_btn_close.addEventListener('click', hideDialog);
         function hideDialog() {
@@ -92,7 +91,6 @@ class Child {
         }
 
         dialog.addEventListener('mousedown', moveHandler);
-
         function moveHandler() {
             var evt = arguments[0];
             var $trgt = $(event.target);
@@ -113,8 +111,17 @@ class Child {
                 $(document).unbind("mouseup");
             });
         }
+
+        // TODO: 点击弹窗顶部, 该弹窗置于最后(删除, 插入), 从而在页面显示在最前
+        dialog.addEventListener('click', function(evt) {
+            dialog.remove();
+            document.body.appendChild(dialog);
+        });
+
+        // 对外输出(给该函数外的其他地方用)
+        this.dialog = dialog;
+        this.dlg_top = dlg_top;
         // 每次操作的总是最后一个弹窗(显示在页面最前面的)
-        // TODO: 点击某个弹窗顶部, 会使得该弹窗置于最前(位置跑到最后) 
     }
 
     // 点击类中的元素, 会生成新的类
